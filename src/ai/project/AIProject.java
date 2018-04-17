@@ -189,7 +189,8 @@ public class AIProject {
         for (int i = 0; i < mainSchedule.size(); i++) {
             System.out.println("******************\nSchedule " + (i + 1));
             mainSchedule.get(i).initialTime();
-            mainSchedule.get(i).FitnessFunction();
+//            mainSchedule.get(i).FitnessFunction();
+            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
             mainSchedule.get(i).print();
         }
     }
