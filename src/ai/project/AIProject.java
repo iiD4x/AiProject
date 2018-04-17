@@ -95,11 +95,19 @@ public class AIProject {
     }
 
     public static void ReadFromFile() throws FileNotFoundException {
-        String In1 = "Instance1.txt";
-        String In2 = "Instance2.txt";
-        String In3 = "Instance3.txt";
-        String TestSample = "sample.txt";
-        File readFromFile = new File(In1);
+        String InstanceToRead="";
+        System.out.println("Choose Instance file [1 for instance1 ,2 for instance2,3 for instance3,4 for TestSample]");
+        Scanner readfiles = new Scanner(System.in);
+        int ChoosedFile = readfiles.nextInt();
+        if (ChoosedFile == 1) InstanceToRead = "Instance1.txt";
+        else if (ChoosedFile==2) InstanceToRead = "Instance2.txt";
+        else if (ChoosedFile==3) InstanceToRead = "Instance3.txt";
+        else if (ChoosedFile==4) InstanceToRead = "sample.txt";
+        else{
+            System.out.println("Wrong input");
+        }
+
+        File readFromFile = new File(InstanceToRead);
         Scanner readsc = new Scanner(readFromFile);
 
         number_of_tasks = readsc.nextInt();     //read scanner
