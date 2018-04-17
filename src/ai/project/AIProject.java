@@ -1,16 +1,22 @@
 package ai.project;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AIProject {
 
     public static int number_of_tasks;
-    public static int generationNum = 0;//generation number
+
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
 
@@ -32,64 +38,36 @@ public class AIProject {
 
         GenerateSchedules();
         ShowSchedules();
+
+//        System.out.println("++++++++++FinishTime()++++++++++++++");
         callInitialTime();
+
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
         callFitnessFunction();
 
         // ShowSchedules();
-        addToPopulation();//!@#$%^& need to double check
+        for (int i = 0; i < mainSchedule.size(); i++) {
+            tempPopulation = new Population();
+            tempPopulation.schedule.add(mainSchedule.get(i));//inside the pop AVG
+            mainPopulation.add(tempPopulation);
+        }//calc selection , add to population
 
-        do {
-
-            Selection(mainPopulation.get(generationNum));
-            //crossOver
-            //add to next generation
-            //generationNum++
-            //check if we should stop or not
-
-        }while(generationNum == 0);
-    }
-
-    private static void addToPopulation() {
-        tempPopulation = new Population();
-        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
-            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
-        }
-        mainPopulation.add(tempPopulation);     //add the whole population now
-
-    }
-
-    private static ArrayList<Schedule> Selection(Population mainPopulation) {
-        ArrayList<Schedule> s= new ArrayList<>();
-        for(int i = 0; i <(mainPopulation.schedule.size() /2); i++) {   //loop as half of this population ( generation )
-
-            int totalSum = 0;
-
-            for (int j = 0; j < mainPopulation.schedule.size(); j++) {
-                totalSum += mainPopulation.schedule.get(j).getsFT();
-            }
-
-            int rand = ThreadLocalRandom.current().nextInt(0, totalSum + 1);
-            int partialSum = 0;
-
-            for (int k = 0; k < mainPopulation.schedule.size(); k++) {
-                partialSum += mainPopulation.schedule.get(k).getsFT();
-                if (partialSum >= rand) {       //!@#$%
-                    s.add( mainPopulation.schedule.get(i));
-                    break;      //finish this iteration and add this schedule then select another one again
-                }
-            }
-
-        }
-        return s;
     }
 
     public static void ReadFromFile() throws FileNotFoundException {
-        String In1 = "Instance1.txt";
-        String In2 = "Instance2.txt";
-        String In3 = "Instance3.txt";
-        String TestSample = "sample.txt";
-        File readFromFile = new File(In1);
+        String InstanceToRead="";
+        System.out.println("Choose Instance file [1 for instance1 ,2 for instance2,3 for instance3,4 for TestSample]");
+        Scanner readfiles = new Scanner(System.in);
+        int ChoosedFile = readfiles.nextInt();
+        if (ChoosedFile == 1) InstanceToRead = "Instance1.txt";
+        else if (ChoosedFile==2) InstanceToRead = "Instance2.txt";
+        else if (ChoosedFile==3) InstanceToRead = "Instance3.txt";
+        else if (ChoosedFile==4) InstanceToRead = "sample.txt";
+        else{
+            System.out.println("Wrong input");
+        }
+
+        File readFromFile = new File(InstanceToRead);
         Scanner readsc = new Scanner(readFromFile);
 
         number_of_tasks = readsc.nextInt();     //read scanner
@@ -110,7 +88,7 @@ public class AIProject {
                 }
 
             } else {
-                //preds.add(null);      //if it has no predecessors then do nothing
+                //preds.add(null);
             }
             if (!spaceSplit[1].equals("-")) {
                 commaSplitSucs = spaceSplit[1].split(",");
@@ -120,7 +98,7 @@ public class AIProject {
                 }
 
             } else {
-                // sucs.add(null);      //if it has no successores then do nothing
+                // sucs.add(null);
             }
 
             testD = Integer.parseInt(spaceSplit[2]);
@@ -220,8 +198,97 @@ public class AIProject {
             System.out.println("******************\nSchedule " + (i + 1));
             mainSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
-            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());      //calculate finish time then set it to schedule finish time
+            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
             mainSchedule.get(i).print();
+        }
+    }
+
+    private static void callCrossOver() {
+        int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
+        Random randomNum = new Random();
+        int crossoverSite = minHT + randomNum.nextInt(maxHT);
+        System.out.println("The CrossOver Site : "+crossoverSite);
+        int maxSchedSize = mainSchedule.size();
+        for (int i = 0; i < maxSchedSize; i++) {
+            Schedule newSchedule1 = new Schedule();
+            Schedule newSchedule2 = new Schedule();
+            ArrayList<Task> crossOverS1P1Tasks = new ArrayList<Task>();
+            ArrayList<Task> crossOverS1P2Tasks = new ArrayList<Task>();
+            ArrayList<Task> crossOverS2P1Tasks = new ArrayList<Task>();
+            ArrayList<Task> crossOverS2P2Tasks = new ArrayList<Task>();
+
+            //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
+            for (int j = 0; j < mainSchedule.get(i).processor1.size(); j++){
+                if (mainSchedule.get(i).processor1.get(j).getHight() <= crossoverSite) {
+                    crossOverS1P1Tasks.add(mainSchedule.get(i).processor1.get(j));
+                }
+            }
+            for (int j = 0; j < mainSchedule.get(i+1).processor1.size(); j++){
+                if (mainSchedule.get(i+1).processor1.get(j).getHight() > crossoverSite) {
+                    crossOverS1P1Tasks.add(mainSchedule.get(i+1).processor1.get(j));
+                }
+            }
+            //The New Schedule 1 Processor 2 (Lower from S1 High from S2)
+            for (int j = 0; j < mainSchedule.get(i).processor2.size(); j++){
+                if (mainSchedule.get(i).processor2.get(j).getHight() <= crossoverSite) {
+                    crossOverS1P2Tasks.add(mainSchedule.get(i).processor2.get(j));
+                }
+            }
+            for (int j = 0; j < mainSchedule.get(i+1).processor2.size(); j++){
+                if (mainSchedule.get(i+1).processor2.get(j).getHight() > crossoverSite) {
+                    crossOverS1P2Tasks.add(mainSchedule.get(i+1).processor2.get(j));
+                }
+            }
+
+            //The New Schedule 2 Processor 1 (Lower from S2 High from S1)
+            for (int j = 0; j < mainSchedule.get(i+1).processor1.size(); j++){
+                if (mainSchedule.get(i+1).processor1.get(j).getHight() <= crossoverSite) {
+                    crossOverS2P1Tasks.add(mainSchedule.get(i+1).processor1.get(j));
+                }
+            }
+            for (int j = 0; j < mainSchedule.get(i).processor1.size(); j++){
+                if (mainSchedule.get(i).processor1.get(j).getHight() > crossoverSite) {
+                    crossOverS2P1Tasks.add(mainSchedule.get(i).processor1.get(j));
+                }
+            }
+            //The New Schedule 2 Processor 2 (Lower from S2 High from S1)
+            for (int j = 0; j < mainSchedule.get(i+1).processor2.size(); j++){
+                if (mainSchedule.get(i+1).processor2.get(j).getHight() <= crossoverSite) {
+                    crossOverS2P2Tasks.add(mainSchedule.get(i+1).processor2.get(j));
+                }
+            }
+            for (int j = 0; j < mainSchedule.get(i).processor2.size(); j++){
+                if (mainSchedule.get(i).processor2.get(j).getHight() > crossoverSite) {
+                    crossOverS2P2Tasks.add(mainSchedule.get(i).processor2.get(j));
+                }
+            }
+            //Adding processes into new schedules
+
+            //S1 P1
+            for (int k = 0; k < crossOverS1P1Tasks.size(); k++) {
+                newSchedule1.processor1.add(crossOverS1P1Tasks.get(k));
+
+            }
+
+            //S1 P2
+            for (int k = 0; k < crossOverS1P2Tasks.size(); k++) {
+                newSchedule1.processor2.add(crossOverS1P2Tasks.get(k));
+
+            }
+
+            //S2 P1
+            for (int k = 0; k < crossOverS2P1Tasks.size(); k++) {
+                newSchedule2.processor1.add(crossOverS2P1Tasks.get(k));
+
+                //S2 P2
+            }
+            for (int k = 0; k < crossOverS2P2Tasks.size(); k++) {
+                newSchedule2.processor2.add(crossOverS2P2Tasks.get(k));
+
+            }
+            mainSchedule.add(newSchedule1);
+            mainSchedule.add(newSchedule2);
+
         }
     }
 }

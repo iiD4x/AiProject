@@ -104,7 +104,7 @@ public int FitnessFunction(){
         }
     }
     //get max finish time
-    updateTime();
+    updateTime();//useless actually but its work is to fix any timing conflicts after calling fitness function
 
     int getSchedFT = 0;
     if(processor1.get(processor1.size()-1).getFinshTime()>processor2.get(processor2.size()-1).getFinshTime()) {
