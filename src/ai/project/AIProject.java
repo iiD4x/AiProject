@@ -16,6 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AIProject {
 
     public static int number_of_tasks;
+    public static int generationNum = 0;//generation number
 
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
