@@ -46,28 +46,59 @@ public class AIProject {
         callFitnessFunction();
 
         // ShowSchedules();
-        for (int i = 0; i < mainSchedule.size(); i++) {
-            tempPopulation = new Population();
-            tempPopulation.schedule.add(mainSchedule.get(i));//inside the pop AVG
-            mainPopulation.add(tempPopulation);
-        }//calc selection , add to population
+        addToPopulation();//!@#$%^& need to double check
+
+        do {
+
+            Selection(mainPopulation.get(generationNum));
+            //crossOver
+            //add to next generation
+            //generationNum++
+            //check if we should stop or not
+
+        }while(generationNum == 0);
+    }
+
+    private static void addToPopulation() {
+        tempPopulation = new Population();
+        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
+            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
+        }
+        mainPopulation.add(tempPopulation);     //add the whole population now
 
     }
 
-    public static void ReadFromFile() throws FileNotFoundException {
-        String InstanceToRead="";
-        System.out.println("Choose Instance file [1 for instance1 ,2 for instance2,3 for instance3,4 for TestSample]");
-        Scanner readfiles = new Scanner(System.in);
-        int ChoosedFile = readfiles.nextInt();
-        if (ChoosedFile == 1) InstanceToRead = "Instance1.txt";
-        else if (ChoosedFile==2) InstanceToRead = "Instance2.txt";
-        else if (ChoosedFile==3) InstanceToRead = "Instance3.txt";
-        else if (ChoosedFile==4) InstanceToRead = "sample.txt";
-        else{
-            System.out.println("Wrong input");
-        }
+    private static ArrayList<Schedule> Selection(Population mainPopulation) {
+        ArrayList<Schedule> s= new ArrayList<>();
+        for(int i = 0; i <(mainPopulation.schedule.size() /2); i++) {   //loop as half of this population ( generation )
 
-        File readFromFile = new File(InstanceToRead);
+            int totalSum = 0;
+
+            for (int j = 0; j < mainPopulation.schedule.size(); j++) {
+                totalSum += mainPopulation.schedule.get(j).getsFT();
+            }
+
+            int rand = ThreadLocalRandom.current().nextInt(0, totalSum + 1);
+            int partialSum = 0;
+
+            for (int k = 0; k < mainPopulation.schedule.size(); k++) {
+                partialSum += mainPopulation.schedule.get(k).getsFT();
+                if (partialSum >= rand) {       //!@#$%
+                    s.add( mainPopulation.schedule.get(i));
+                    break;      //finish this iteration and add this schedule then select another one again
+                }
+            }
+
+        }
+        return s;
+    }
+
+    public static void ReadFromFile() throws FileNotFoundException {
+        String In1 = "Instance1.txt";
+        String In2 = "Instance2.txt";
+        String In3 = "Instance3.txt";
+        String TestSample = "sample.txt";
+        File readFromFile = new File(In1);
         Scanner readsc = new Scanner(readFromFile);
 
         number_of_tasks = readsc.nextInt();     //read scanner
