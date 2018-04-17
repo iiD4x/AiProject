@@ -1,22 +1,16 @@
 package ai.project;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AIProject {
 
     public static int number_of_tasks;
-
+    public static int generationNum = 0;//generation number
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
 
@@ -38,20 +32,56 @@ public class AIProject {
 
         GenerateSchedules();
         ShowSchedules();
-
-//        System.out.println("++++++++++FinishTime()++++++++++++++");
         callInitialTime();
-
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
         callFitnessFunction();
 
         // ShowSchedules();
-        for (int i = 0; i < mainSchedule.size(); i++) {
-            tempPopulation = new Population();
-            tempPopulation.schedule.add(mainSchedule.get(i));//inside the pop AVG
-            mainPopulation.add(tempPopulation);
-        }//calc selection , add to population
+        addToPopulation();//!@#$%^& need to double check
 
+        do {
+
+            Selection(mainPopulation.get(generationNum));
+            //crossOver
+            //add to next generation
+            //generationNum++
+            //check if we should stop or not
+
+        }while(generationNum == 0);
+    }
+
+    private static void addToPopulation() {
+        tempPopulation = new Population();
+        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
+            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
+        }
+        mainPopulation.add(tempPopulation);     //add the whole population now
+
+    }
+
+    private static ArrayList<Schedule> Selection(Population mainPopulation) {
+        ArrayList<Schedule> s= new ArrayList<>();
+        for(int i = 0; i <(mainPopulation.schedule.size() /2); i++) {   //loop as half of this population ( generation )
+
+            int totalSum = 0;
+
+            for (int j = 0; j < mainPopulation.schedule.size(); j++) {
+                totalSum += mainPopulation.schedule.get(j).getsFT();
+            }
+
+            int rand = ThreadLocalRandom.current().nextInt(0, totalSum + 1);
+            int partialSum = 0;
+
+            for (int k = 0; k < mainPopulation.schedule.size(); k++) {
+                partialSum += mainPopulation.schedule.get(k).getsFT();
+                if (partialSum >= rand) {       //!@#$%
+                    s.add( mainPopulation.schedule.get(i));
+                    break;      //finish this iteration and add this schedule then select another one again
+                }
+            }
+
+        }
+        return s;
     }
 
     public static void ReadFromFile() throws FileNotFoundException {
@@ -59,7 +89,7 @@ public class AIProject {
         String In2 = "Instance2.txt";
         String In3 = "Instance3.txt";
         String TestSample = "sample.txt";
-        File readFromFile = new File(In3);
+        File readFromFile = new File(In1);
         Scanner readsc = new Scanner(readFromFile);
 
         number_of_tasks = readsc.nextInt();     //read scanner
@@ -80,7 +110,7 @@ public class AIProject {
                 }
 
             } else {
-                //preds.add(null);
+                //preds.add(null);      //if it has no predecessors then do nothing
             }
             if (!spaceSplit[1].equals("-")) {
                 commaSplitSucs = spaceSplit[1].split(",");
@@ -90,7 +120,7 @@ public class AIProject {
                 }
 
             } else {
-                // sucs.add(null);
+                // sucs.add(null);      //if it has no successores then do nothing
             }
 
             testD = Integer.parseInt(spaceSplit[2]);
@@ -190,7 +220,7 @@ public class AIProject {
             System.out.println("******************\nSchedule " + (i + 1));
             mainSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
-            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
+            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());      //calculate finish time then set it to schedule finish time
             mainSchedule.get(i).print();
         }
     }
