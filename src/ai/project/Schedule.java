@@ -10,7 +10,8 @@ public class Schedule {
 public ArrayList<Task> processor1 = new ArrayList<>();
 public ArrayList<Task> processor2 = new ArrayList<>();
 public int sFT=0;
-//Setup Time .. to set start time and finish time for each task in the processor ignoring dependencies.
+
+    //Setup Time .. to set start time and finish time for each task in the processor ignoring dependencies.
 public void initialTime(){
     
     for(int i=0; i<processor1.size(); i++){
@@ -58,7 +59,7 @@ public void updateTime(){
 }
 
 //FitnessFunction
-public void FitnessFunction(){
+public int FitnessFunction(){
     int maxHieght = AIProject.ts.get(AIProject.ts.size()-1).getHight();
     
     for(int i=1; i<=maxHieght; i++){    //starting from hieght 1
@@ -108,15 +109,18 @@ public void FitnessFunction(){
     int getSchedFT = 0;
     if(processor1.get(processor1.size()-1).getFinshTime()>processor2.get(processor2.size()-1).getFinshTime()) {
         getSchedFT = processor1.get(processor1.size() - 1).getFinshTime();
-        System.out.println("Sched FT :" + getSchedFT);
+//        System.out.println("Sched FT :" + getSchedFT);
+        return getSchedFT;
     } else {
         getSchedFT = processor2.get(processor2.size() - 1).getFinshTime();
-        System.out.println("Sched FT :" + getSchedFT);
+//        System.out.println("Sched FT :" + getSchedFT);
+        return getSchedFT;
     }
 }
 
 //print all Tasks    
     public void print() {
+        System.out.println("Schedule Finish Time = "+sFT);
         System.out.println("Processor #1");
         for (int i = 0; i < processor1.size(); i++) {
             System.out.println("Task #["+processor1.get(i).getId()+"] Duration ["+processor1.get(i).getDuration()+
@@ -132,4 +136,11 @@ public void FitnessFunction(){
     }
 
 
+    public void setSchedFinishTime(int i) {
+        sFT = i;
+    }
+
+    public int getsFT() {
+        return sFT;
+    }
 }
