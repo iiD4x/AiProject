@@ -38,26 +38,28 @@ public class AIProject {
         ReadFromFile();
 
         GenerateSchedules();
-        ShowSchedules();
 
+        ShowSchedules();
 
         callInitialTime();
 
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
         callFitnessFunction();
-
-        // ShowSchedules();
-        addToPopulation();//!@#$%^& need to double check
-
-        do {
-
-            Selection(mainPopulation.get(generationNum));
-            //crossOver
-            //add to next generation
-            generationNum++;
-            //check if we should stop or not
-//            Stop(); //!@#$%^&*()_+
-        }while(generationNum == 0);
+        System.out.println("\n+++++++++CrossOver()+++++++++++");
+        mainSchedule.addAll(callCrossOver(mainSchedule.get(1),mainSchedule.get(5)));
+        callFitnessFunction();
+        ShowSchedules();
+//        addToPopulation();//!@#$%^& need to double check
+//
+//        do {
+//
+//            Selection(mainPopulation.get(generationNum));
+//            //crossOver
+//            //add to next generation
+//            generationNum++;
+//            //check if we should stop or not
+//            //Stop(); //!@#$%^&*()_+
+//        }while(generationNum == 0);
     }
 
 //    private static boolean Stop() {
@@ -330,11 +332,11 @@ public class AIProject {
 
     private static void callFitnessFunction() {
         for (int i = 0; i < mainSchedule.size(); i++) {
-            System.out.println("******************\nSchedule " + (i + 1));
+//            System.out.println("******************\nSchedule " + (i + 1));
             mainSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
             mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
-            mainSchedule.get(i).print();
+//            mainSchedule.get(i).print();
         }
     }
 }
