@@ -40,7 +40,7 @@ public class AIProject {
         GenerateSchedules();
         ShowSchedules();
 
-//        System.out.println("++++++++++FinishTime()++++++++++++++");
+
         callInitialTime();
 
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
@@ -54,9 +54,9 @@ public class AIProject {
             Selection(mainPopulation.get(generationNum));
             //crossOver
             //add to next generation
-            //generationNum++
+            generationNum++;
             //check if we should stop or not
-
+//            Stop(); //!@#$%^&*()_+
         }while(generationNum == 0);
     }
 
