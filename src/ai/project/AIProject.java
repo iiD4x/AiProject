@@ -238,74 +238,63 @@ public class AIProject {
         }
     }
 
-    private static void callFitnessFunction() {
-        for (int i = 0; i < mainSchedule.size(); i++) {
-            System.out.println("******************\nSchedule " + (i + 1));
-            mainSchedule.get(i).initialTime();
-//            mainSchedule.get(i).FitnessFunction();
-            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
-            mainSchedule.get(i).print();
-        }
-    }
-
-    private static ArrayList<Schedule> callCrossOver(ArrayList<Schedule> selectedSchedules) {
+    private static ArrayList<Schedule> callCrossOver(Schedule S1,Schedule S2) {
         int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
         Random randomNum = new Random();
         int crossoverSite = minHT + randomNum.nextInt(maxHT);
         System.out.println("The CrossOver Site : "+crossoverSite);
-        int maxSchedSize = selectedSchedules.size();
+//        int maxSchedSize = selectedSchedules.size(); Maximum Size = PopSize/2
         ArrayList<Schedule> CrossOvedSchedules = new ArrayList<Schedule>();
-        for (int i = 0; i < maxSchedSize; i++) {
-            Schedule newSchedule1 = new Schedule();
-            Schedule newSchedule2 = new Schedule();
-            ArrayList<Task> crossOverS1P1Tasks = new ArrayList<Task>();
-            ArrayList<Task> crossOverS1P2Tasks = new ArrayList<Task>();
-            ArrayList<Task> crossOverS2P1Tasks = new ArrayList<Task>();
-            ArrayList<Task> crossOverS2P2Tasks = new ArrayList<Task>();
+        Schedule newSchedule1 = new Schedule();
+        Schedule newSchedule2 = new Schedule();
+        ArrayList<Task> crossOverS1P1Tasks = new ArrayList<Task>();
+        ArrayList<Task> crossOverS1P2Tasks = new ArrayList<Task>();
+        ArrayList<Task> crossOverS2P1Tasks = new ArrayList<Task>();
+        ArrayList<Task> crossOverS2P2Tasks = new ArrayList<Task>();
 
             //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
-            for (int j = 0; j < selectedSchedules.get(i).processor1.size(); j++){
-                if (selectedSchedules.get(i).processor1.get(j).getHight() <= crossoverSite) {
-                    crossOverS1P1Tasks.add(selectedSchedules.get(i).processor1.get(j));
+            for (int j = 0; j < S1.processor1.size(); j++){
+                if (S1.processor1.get(j).getHight() <= crossoverSite) {
+                    crossOverS1P1Tasks.add(S1.processor1.get(j));
                 }
             }
-            for (int j = 0; j < selectedSchedules.get(i+1).processor1.size(); j++){
-                if (selectedSchedules.get(i+1).processor1.get(j).getHight() > crossoverSite) {
-                    crossOverS1P1Tasks.add(selectedSchedules.get(i+1).processor1.get(j));
+            for (int j = 0; j < S2.processor1.size(); j++){
+                if (S2.processor1.get(j).getHight() > crossoverSite) {
+                    crossOverS1P1Tasks.add(S2.processor1.get(j));
                 }
             }
             //The New Schedule 1 Processor 2 (Lower from S1 High from S2)
-            for (int j = 0; j < selectedSchedules.get(i).processor2.size(); j++){
-                if (selectedSchedules.get(i).processor2.get(j).getHight() <= crossoverSite) {
-                    crossOverS1P2Tasks.add(selectedSchedules.get(i).processor2.get(j));
+            for (int j = 0; j < S1.processor2.size(); j++){
+                if (S1.processor2.get(j).getHight() <= crossoverSite) {
+                    crossOverS1P2Tasks.add(S1.processor2.get(j));
                 }
             }
-            for (int j = 0; j < selectedSchedules.get(i+1).processor2.size(); j++){
-                if (selectedSchedules.get(i+1).processor2.get(j).getHight() > crossoverSite) {
-                    crossOverS1P2Tasks.add(selectedSchedules.get(i+1).processor2.get(j));
+            for (int j = 0; j < S2.processor2.size(); j++){
+                if (S2.processor2.get(j).getHight() > crossoverSite) {
+                    crossOverS1P2Tasks.add(S2.processor2.get(j));
                 }
             }
 
             //The New Schedule 2 Processor 1 (Lower from S2 High from S1)
-            for (int j = 0; j < selectedSchedules.get(i+1).processor1.size(); j++){
-                if (selectedSchedules.get(i+1).processor1.get(j).getHight() <= crossoverSite) {
-                    crossOverS2P1Tasks.add(selectedSchedules.get(i+1).processor1.get(j));
+            for (int j = 0; j < S2.processor1.size(); j++){
+                if (S2.processor1.get(j).getHight() <= crossoverSite) {
+                    crossOverS2P1Tasks.add(S2.processor1.get(j));
                 }
             }
-            for (int j = 0; j < selectedSchedules.get(i).processor1.size(); j++){
-                if (selectedSchedules.get(i).processor1.get(j).getHight() > crossoverSite) {
-                    crossOverS2P1Tasks.add(selectedSchedules.get(i).processor1.get(j));
+            for (int j = 0; j < S1.processor1.size(); j++){
+                if (S1.processor1.get(j).getHight() > crossoverSite) {
+                    crossOverS2P1Tasks.add(S1.processor1.get(j));
                 }
             }
             //The New Schedule 2 Processor 2 (Lower from S2 High from S1)
-            for (int j = 0; j < selectedSchedules.get(i+1).processor2.size(); j++){
-                if (selectedSchedules.get(i+1).processor2.get(j).getHight() <= crossoverSite) {
-                    crossOverS2P2Tasks.add(selectedSchedules.get(i+1).processor2.get(j));
+            for (int j = 0; j < S2.processor2.size(); j++){
+                if (S2.processor2.get(j).getHight() <= crossoverSite) {
+                    crossOverS2P2Tasks.add(S2.processor2.get(j));
                 }
             }
-            for (int j = 0; j < selectedSchedules.get(i).processor2.size(); j++){
-                if (selectedSchedules.get(i).processor2.get(j).getHight() > crossoverSite) {
-                    crossOverS2P2Tasks.add(selectedSchedules.get(i).processor2.get(j));
+            for (int j = 0; j < S1.processor2.size(); j++){
+                if (S1.processor2.get(j).getHight() > crossoverSite) {
+                    crossOverS2P2Tasks.add(S1.processor2.get(j));
                 }
             }
             //Adding processes into new schedules
@@ -335,7 +324,17 @@ public class AIProject {
             CrossOvedSchedules.add(newSchedule1);
             CrossOvedSchedules.add(newSchedule2);
 
-        }
+
         return CrossOvedSchedules;
+    }
+
+    private static void callFitnessFunction() {
+        for (int i = 0; i < mainSchedule.size(); i++) {
+            System.out.println("******************\nSchedule " + (i + 1));
+            mainSchedule.get(i).initialTime();
+//            mainSchedule.get(i).FitnessFunction();
+            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
+            mainSchedule.get(i).print();
+        }
     }
 }
