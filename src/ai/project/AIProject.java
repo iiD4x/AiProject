@@ -1,23 +1,20 @@
 package ai.project;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static java.lang.Integer.MAX_VALUE;
 
 public class AIProject {
 
     public static int number_of_tasks;
     public static int generationNum = 0;//generation number
-
+    public static int check = MAX_VALUE ,i ;
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
 
@@ -45,60 +42,84 @@ public class AIProject {
 
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
         callFitnessFunction();
-        System.out.println("\n+++++++++CrossOver()+++++++++++");
-        for (int i = 0; i < 50; i++) {
-            int minHT=0,maxHT=49;
-            Random randomNum = new Random();
-            int crossoverSite1 = minHT + randomNum.nextInt(maxHT);
-            int crossoverSite2 = minHT + randomNum.nextInt(maxHT);
-                mainSchedule.addAll(callCrossOver(mainSchedule.get(crossoverSite1),mainSchedule.get(crossoverSite2)));
-        }
-        callFitnessFunction();
-        ShowSchedules();
-//        addToPopulation();//!@#$%^& need to double check
-//
-//        do {
-//
-//            Selection(mainPopulation.get(generationNum));
-//            //crossOver
-//            //add to next generation
-//            generationNum++;
-//            //check if we should stop or not
-//            //Stop(); //!@#$%^&*()_+
-//        }while(generationNum == 0);
+
+       // ShowSchedules();
+
+        InitialPopulation(mainSchedule);//!@#$%^& need to double check
+
+
+
+
+        do {
+            ArrayList<Schedule> allSchedules = Selection(mainPopulation.get(generationNum));
+
+            for (int i = 0; i < 50; i++) {
+                int minHT=0,maxHT=49;
+                Random randomNum = new Random();
+                int crossoverSite1 = minHT + randomNum.nextInt(maxHT);
+                int crossoverSite2 = minHT + randomNum.nextInt(maxHT);
+
+                allSchedules.addAll(callCrossOver(allSchedules.get(crossoverSite1),allSchedules.get(crossoverSite2)));
+            }
+            // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
+            generateNewPopulation(allSchedules);
+            generationNum++;
+
+        }while( Loop(mainPopulation.get(generationNum-1)));    //checks if we should stop looping or not
+        System.out.println("Solution for this population is :"+mainPopulation.get(mainPopulation.size()-1).getBestFT()+" in generationNum : "+generationNum);
     }
 
-//    private static boolean Stop() {
-//
-//        return false;
-//    }
+    //take schedules that are returned from Crossover & Selection method and add them to new Population
+    private static void generateNewPopulation(ArrayList<Schedule> wholeSchedules ) {
+        tempPopulation = new Population();
+        tempPopulation.schedule.addAll(wholeSchedules);
+        mainPopulation.add(tempPopulation);
+    }
 
-    private static void addToPopulation() {
+    /*finds the best found solution and compare it with the next populations until there isn't any other better solution
+    for the next 100 generations*/
+    private static boolean Loop(Population population) {
+//        stop after 1000 iteration and there is no improvements in the finish time
+        if (population.getBestFT() < check){
+            check = population.getBestFT(); //if there is a better solution than the current solution
+            i=0;
+        }else {
+            i++;
+        }
+        if(i == 1000){
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void InitialPopulation(ArrayList<Schedule> mainSchedule) {
         tempPopulation = new Population();
         for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
             tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
         }
-        mainPopulation.add(tempPopulation);     //add the whole population now
-
+        mainPopulation.add(tempPopulation);     //add the whole temporary population now
+//        generationNum++;
     }
 
-    private static ArrayList<Schedule> Selection(Population mainPopulation) {
+    private static ArrayList<Schedule> Selection(Population currentPopulation) {
         ArrayList<Schedule> s= new ArrayList<>();
-        for(int i = 0; i <(mainPopulation.schedule.size() /2); i++) {   //loop as half of this population ( generation )
+        int z = (currentPopulation.schedule.size() /2);
+        for(int i = 0; i < z ; i++) {           //loop as half of this population Schedule size ( generation )
 
             int totalSum = 0;
 
-            for (int j = 0; j < mainPopulation.schedule.size(); j++) {
-                totalSum += mainPopulation.schedule.get(j).getsFT();
+            for (int j = currentPopulation.schedule.size()-1; j >= 0 ; j--) {
+                totalSum += currentPopulation.schedule.get(j).getsFT();
             }
 
             int rand = ThreadLocalRandom.current().nextInt(0, totalSum + 1);
             int partialSum = 0;
 
-            for (int k = 0; k < mainPopulation.schedule.size(); k++) {
-                partialSum += mainPopulation.schedule.get(k).getsFT();
+            for (int k = currentPopulation.schedule.size()-1; k >= 0 ; k--) {
+                partialSum += currentPopulation.schedule.get(k).getsFT();
                 if (partialSum >= rand) {       //!@#$%
-                    s.add( mainPopulation.schedule.get(i));
+                    s.add( currentPopulation.schedule.get(i));
                     break;      //finish this iteration and add this schedule then select another one again
                 }
             }
@@ -197,7 +218,7 @@ public class AIProject {
 
     private static void GenerateSchedules() {
         BubbleSort(ts);
-        for (int j = 0; j < number_of_tasks; j++) {       //nCr
+        for (int j = 0; j < 100; j++) {
             tempSchedule = new Schedule();
             for (int i = 0; i < ts.size(); i++) {
                 randomNum = ThreadLocalRandom.current().nextInt(1, 3);
@@ -209,11 +230,12 @@ public class AIProject {
             }
             mainSchedule.add(tempSchedule);
         }
+
         for (int i = 0; i < mainSchedule.size(); i++) {
-            if (mainSchedule.get(i).processor1.isEmpty()) {    //if this gene is empty
+            if (mainSchedule.get(i).processor1.isEmpty()) {    //if this processor is empty
                 mainSchedule.get(i).processor1.add(mainSchedule.get(i).processor2.remove(mainSchedule.get(i).processor2.size() - 1));
 
-            } else if (mainSchedule.get(i).processor2.isEmpty()) {    //if this gene is empty
+            } else if (mainSchedule.get(i).processor2.isEmpty()) {    //if this processor is empty
                 mainSchedule.get(i).processor2.add(mainSchedule.get(i).processor1.remove(mainSchedule.get(i).processor1.size() - 1));
             }
         }
@@ -251,7 +273,7 @@ public class AIProject {
         int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
         Random randomNum = new Random();
         int crossoverSite = minHT + randomNum.nextInt(maxHT);
-        System.out.println("The CrossOver Site : "+crossoverSite);
+        //System.out.println("The CrossOver Site : "+crossoverSite);
 //        int maxSchedSize = selectedSchedules.size(); Maximum Size = PopSize/2
         ArrayList<Schedule> CrossOvedSchedules = new ArrayList<Schedule>();
         Schedule newSchedule1 = new Schedule();
