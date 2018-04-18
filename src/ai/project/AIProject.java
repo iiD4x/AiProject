@@ -50,13 +50,20 @@ public class AIProject {
         addToPopulation();//!@#$%^& need to double check
 
         do {
-            callCrossOver(Selection(mainPopulation.get(generationNum)));
+
+            Selection(mainPopulation.get(generationNum));
+            //crossOver
             //add to next generation
             //generationNum++
             //check if we should stop or not
 
         }while(generationNum == 0);
     }
+
+//    private static boolean Stop() {
+//
+//        return false;
+//    }
 
     private static void addToPopulation() {
         tempPopulation = new Population();
