@@ -1,9 +1,14 @@
 package ai.project;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -214,6 +219,35 @@ public class AIProject {
 //           for(int k=0; k<array.size(); k++){
 //            System.out.println("\nTask Num #"+(k+1)+" : "+array.get(k).getName()+" , Height Of "+array.get(k).getHight());
 //        }
+    }
+
+    private static void Mutation(Schedule S1) {
+        Task mutationTaskP1 = new Task(),mutationTaskP2 = new Task();
+        int tempInx1 = 0,tempInx2 = 0;
+
+        int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
+        Random randomNum = new Random();
+        int mutationHeight = 0;
+        boolean foundP1P2 = false;
+        for (int k = 0; k < number_of_tasks && !foundP1P2; k++) {
+            mutationHeight = minHT + randomNum.nextInt(maxHT);
+            for (int i = 0; i < S1.processor1.size(); i++) {
+                if(S1.processor1.get(i).getHight()== mutationHeight && !foundP1P2){
+                    for (int j = 0; j < S1.processor2.size(); j++) {
+                        if(S1.processor2.get(j).getHight()== mutationHeight) {
+                            mutationTaskP1 = S1.processor1.remove(i);
+                            tempInx1 = i;
+                            mutationTaskP2 = S1.processor2.remove(j);
+                            tempInx2 = j;
+                            foundP1P2 = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        S1.processor1.add(tempInx1,mutationTaskP2);
+        S1.processor2.add(tempInx2,mutationTaskP1);
     }
 
     private static void GenerateSchedules() {
