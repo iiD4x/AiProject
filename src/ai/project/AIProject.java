@@ -9,12 +9,13 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 
 public class AIProject {
 
     public static int number_of_tasks;
     public static int generationNum = 0;//generation number
-    public static int check = MAX_VALUE ,i ;
+    public static int check = MAX_VALUE ,i=0 ;
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
 
@@ -52,6 +53,7 @@ public class AIProject {
 
         do {
             ArrayList<Schedule> allSchedules = Selection(mainPopulation.get(generationNum));
+            System.out.println("selection Size : "+allSchedules.size());
 
             for (int i = 0; i < 50; i++) {
                 int minHT=0,maxHT=49;
@@ -61,6 +63,7 @@ public class AIProject {
 
                 allSchedules.addAll(callCrossOver(allSchedules.get(crossoverSite1),allSchedules.get(crossoverSite2)));
             }
+
             // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
             generateNewPopulation(allSchedules);
             generationNum++;
@@ -86,7 +89,7 @@ public class AIProject {
         }else {
             i++;
         }
-        if(i == 1000){
+        if(i == 100){
             return false;
         }
 
@@ -103,7 +106,7 @@ public class AIProject {
     }
 
     private static ArrayList<Schedule> Selection(Population currentPopulation) {
-        ArrayList<Schedule> s= new ArrayList<>();
+        ArrayList<Schedule> selectedSchedules = new ArrayList<>();
         int z = (currentPopulation.schedule.size() /2);
         for(int i = 0; i < z ; i++) {           //loop as half of this population Schedule size ( generation )
 
@@ -119,13 +122,13 @@ public class AIProject {
             for (int k = currentPopulation.schedule.size()-1; k >= 0 ; k--) {
                 partialSum += currentPopulation.schedule.get(k).getsFT();
                 if (partialSum >= rand) {       //!@#$%
-                    s.add( currentPopulation.schedule.get(i));
+                    selectedSchedules.add( currentPopulation.schedule.get(i));
                     break;      //finish this iteration and add this schedule then select another one again
                 }
             }
 
         }
-        return s;
+        return selectedSchedules;
     }
 
     public static void ReadFromFile() throws FileNotFoundException {
