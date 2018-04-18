@@ -39,14 +39,20 @@ public class AIProject {
 
         GenerateSchedules();
 
-        ShowSchedules();
+//        ShowSchedules();
 
         callInitialTime();
 
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
         callFitnessFunction();
         System.out.println("\n+++++++++CrossOver()+++++++++++");
-        mainSchedule.addAll(callCrossOver(mainSchedule.get(1),mainSchedule.get(5)));
+        for (int i = 0; i < 50; i++) {
+            int minHT=0,maxHT=49;
+            Random randomNum = new Random();
+            int crossoverSite1 = minHT + randomNum.nextInt(maxHT);
+            int crossoverSite2 = minHT + randomNum.nextInt(maxHT);
+                mainSchedule.addAll(callCrossOver(mainSchedule.get(crossoverSite1),mainSchedule.get(crossoverSite2)));
+        }
         callFitnessFunction();
         ShowSchedules();
 //        addToPopulation();//!@#$%^& need to double check
@@ -218,6 +224,7 @@ public class AIProject {
 
         for (int j = 0; j < mainSchedule.size(); j++) {
             System.out.println("******************\nSchedule " + (j + 1) + " : ");
+            System.out.println("Schedule Finish Time = "+mainSchedule.get(j).sFT);
             System.out.print("P1 : ");
             for (int i = 0; i < mainSchedule.get(j).processor1.size(); i++) {
                 System.out.print("["+mainSchedule.get(j).processor1.get(i).getId()+"]");
@@ -299,33 +306,14 @@ public class AIProject {
                     crossOverS2P2Tasks.add(S1.processor2.get(j));
                 }
             }
-            //Adding processes into new schedules
 
-            //S1 P1
-            for (int k = 0; k < crossOverS1P1Tasks.size(); k++) {
-                newSchedule1.processor1.add(crossOverS1P1Tasks.get(k));
-
-            }
-
-            //S1 P2
-            for (int k = 0; k < crossOverS1P2Tasks.size(); k++) {
-                newSchedule1.processor2.add(crossOverS1P2Tasks.get(k));
-
-            }
-
-            //S2 P1
-            for (int k = 0; k < crossOverS2P1Tasks.size(); k++) {
-                newSchedule2.processor1.add(crossOverS2P1Tasks.get(k));
-
-                //S2 P2
-            }
-            for (int k = 0; k < crossOverS2P2Tasks.size(); k++) {
-                newSchedule2.processor2.add(crossOverS2P2Tasks.get(k));
-
-            }
-            CrossOvedSchedules.add(newSchedule1);
-            CrossOvedSchedules.add(newSchedule2);
-
+        //Adding processes into new schedules
+        newSchedule1.processor1 = crossOverS1P1Tasks;
+        newSchedule1.processor2 = crossOverS1P2Tasks;
+        newSchedule2.processor1 = crossOverS2P1Tasks;
+        newSchedule2.processor2 = crossOverS2P2Tasks;
+        CrossOvedSchedules.add(newSchedule1);
+        CrossOvedSchedules.add(newSchedule2);
 
         return CrossOvedSchedules;
     }
