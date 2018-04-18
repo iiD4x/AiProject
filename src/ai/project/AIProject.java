@@ -57,7 +57,6 @@ public class AIProject {
 
         do {
             ArrayList<Schedule> allSchedules = Selection(mainPopulation.get(generationNum));
-
             for (int i = 0; i < 50; i++) {
                 int minHT=0,maxHT=49;
                 Random randomNum = new Random();
@@ -100,9 +99,10 @@ public class AIProject {
 
     private static void InitialPopulation(ArrayList<Schedule> mainSchedule) {
         tempPopulation = new Population();
-        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
-            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
-        }
+//        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
+//            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
+//        }
+        tempPopulation.schedule = mainSchedule;
         mainPopulation.add(tempPopulation);     //add the whole temporary population now
 //        generationNum++;
     }
