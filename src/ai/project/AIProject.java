@@ -39,13 +39,13 @@ public class AIProject {
 
         GenerateSchedules();
         callFitnessFunction(mainSchedule);
-        for (int j = 0; j <mainSchedule.size() ; j++) {
-            System.out.println("SchedNum "+(j+1));
-            mainSchedule.get(j).print();
-        }
+//        for (int j = 0; j <mainSchedule.size() ; j++) {
+//            System.out.println("SchedNum "+(j+1));
+//            mainSchedule.get(j).print();
+//        }
 
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
-        mainPopulation.get(0).print();
+//        mainPopulation.get(0).print();
         do {
 
             //SELECTION
@@ -64,16 +64,14 @@ public class AIProject {
                 }
                 Crossoved.addAll(callCrossOver(allSchedules.get(randomSched1), allSchedules.get(randomSched2)));
                 callFitnessFunction(Crossoved);
+                for (int j = 0; j < Crossoved.size(); j++) {
+                    randomNumDouble = ThreadLocalRandom.current().nextDouble(0, 1);
+                    if(randomNumDouble<0.003){
+                        Crossoved.add(j,Mutation(allSchedules.remove(j)));
+                    }
+                }
                 allSchedules.addAll(Crossoved);
 
-            }
-
-            //MUTATION
-            for (int j = 0; j < allSchedules.size(); j++) {
-                randomNumDouble = ThreadLocalRandom.current().nextDouble(0, 1);
-                if(randomNumDouble<0.003){
-                    allSchedules.add(j,Mutation(allSchedules.remove(j)));
-                }
             }
 
             // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
@@ -84,7 +82,8 @@ public class AIProject {
             generateNewPopulation(allSchedules);
             generationNum++;
         } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
-        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + bestGeneration);
+        mainPopulation.get(bestGeneration-1).print();
+        System.out.println("Solution for this population is :" + mainPopulation.get(bestGeneration-1).getBestFT() + " in generationNum : " + bestGeneration);
 
     }
 
