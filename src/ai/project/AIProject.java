@@ -29,6 +29,7 @@ public class AIProject {
 
     public static Population tempPopulation;
     public static ArrayList<Population> mainPopulation = new ArrayList<>();
+    private static double randomNumDouble;
 
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -36,12 +37,6 @@ public class AIProject {
         ReadFromFile();
 
         GenerateSchedules();
-
-//        ShowSchedules();
-//        callInitialTime();
-
-        System.out.println("*******************************************************************");
-        System.out.println("HERE We Will Print After Generating Schedule");
         callFitnessFunction(mainSchedule);
         for (int j = 0; j <mainSchedule.size() ; j++) {
             System.out.println("SchedNum "+(j+1));
@@ -49,15 +44,14 @@ public class AIProject {
         }
 
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
-        System.out.println("*******************************************************************");
-//        System.out.println("HERE We Will Print After Inserting the schedule inside population and applying fittness");
-//        callFitnessFunction(mainPopulation.get(0).schedule);
-        System.out.println("*******************************************************************");
-        System.out.println("HERE Print the first generation using print from inside population");
         mainPopulation.get(0).print();
         do {
+
+            //SELECTION
             ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
             allSchedules = Selection(mainPopulation.get(generationNum));
+
+            //CROSSOVER
             for (int i = 0; i < 25; i++) {
                 ArrayList<Schedule> Crossoved = new ArrayList<Schedule>();
                 int minSched = 0, maxSched = 49;
@@ -73,15 +67,22 @@ public class AIProject {
 
             }
 
+            //MUTATION
+            for (int j = 0; j < allSchedules.size(); j++) {
+                randomNumDouble = ThreadLocalRandom.current().nextDouble(0, 1);
+                if(randomNumDouble<0.003){
+                    allSchedules.add(j,Mutation(allSchedules.remove(j)));
+                }
+            }
+
             // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
+            //Calculate Fitness
+            callFitnessFunction(allSchedules);
+
+            //INSERT THE NEW POPULATION
             generateNewPopulation(allSchedules);
             generationNum++;
-//            callFitnessFunction(mainPopulation.get(generationNum).schedule);
-            mainPopulation.get(generationNum).getBestFT();
-//            mainPopulation.get(generationNum).print();
-
         } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
-//        mainPopulation.get(mainPopulation.size()-1).print();
         System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + generationNum);
 
     }
@@ -235,7 +236,7 @@ public class AIProject {
 //        }
     }
 
-    private static void Mutation(Schedule S1) {
+    private static Schedule Mutation(Schedule S1) {
         Task mutationTaskP1 = new Task(), mutationTaskP2 = new Task();
         int tempInx1 = 0, tempInx2 = 0;
 
@@ -262,6 +263,7 @@ public class AIProject {
         }
         S1.processor1.add(tempInx1, mutationTaskP2);
         S1.processor2.add(tempInx2, mutationTaskP1);
+        return S1;
     }
 
     private static void GenerateSchedules() {
