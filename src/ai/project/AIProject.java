@@ -103,7 +103,7 @@ public class AIProject {
         } else {
             i++;
         }
-        if (i == 15000) {
+        if (i == 2000) {
             return false;
         }
 
