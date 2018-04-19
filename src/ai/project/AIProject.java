@@ -16,6 +16,7 @@ public class AIProject {
     public static int generationNum = 0;//generation number
     public static int check = MAX_VALUE, i = 0;
     public static Task T;
+    public static ArrayList<Task> tempTask;
     public static ArrayList<Task> ts = new ArrayList<>();
 
     public static ArrayList<Integer> preds, sucs;
@@ -34,7 +35,7 @@ public class AIProject {
 
         ReadFromFile();
 
-        GenerateSchedules();
+        GenerateSchedules(ts);
 
 //        ShowSchedules();
 //        callInitialTime();
@@ -42,6 +43,10 @@ public class AIProject {
         System.out.println("*******************************************************************");
         System.out.println("HERE We Will Print After Generating Schedule");
         callFitnessFunction(mainSchedule);
+        for (int j = 0; j <mainSchedule.size() ; j++) {
+            mainSchedule.get(j).print();
+        }
+
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
         System.out.println("*******************************************************************");
         System.out.println("HERE We Will Print After Inserting the schedule inside population and applying fittness");
@@ -436,7 +441,7 @@ public class AIProject {
 //            mainSchedule.get(i).FitnessFunction();
             int schedFinTime = currentSchedule.get(i).FitnessFunction(currentSchedule.get(i));
             currentSchedule.get(i).setSchedFinishTime(schedFinTime);
-            currentSchedule.get(i).print();
+//            currentSchedule.get(i).print();
         }
     }
 }
