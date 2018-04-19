@@ -82,7 +82,7 @@ public class AIProject {
             generateNewPopulation(allSchedules);
             generationNum++;
         } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
-        mainPopulation.get(bestGeneration-1).print();
+//        mainPopulation.get(bestGeneration-1).print();
         System.out.println("Solution for this population is :" + mainPopulation.get(bestGeneration-1).getBestFT() + " in generationNum : " + bestGeneration);
 
     }
