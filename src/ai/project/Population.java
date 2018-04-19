@@ -14,10 +14,16 @@ public class Population {
 
         for (int i = 0; i < schedule.size(); i++) {
             if(schedule.get(i).getsFT() < BestFT){
-                BestFT = schedule.get(i).getsFT();
+                this.BestFT = schedule.get(i).getsFT();
             }
         }
         return BestFT ;
+    }
+
+    public void print(){
+        for (int i = 0; i < schedule.size(); i++) {
+            System.out.println(i+"  FT : "+schedule.get(i).getsFT());
+        }
     }
 
 }

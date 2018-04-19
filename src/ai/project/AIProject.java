@@ -47,17 +47,14 @@ public class AIProject {
         callInitialTime();
 
         System.out.println("\n+++++++++FitnessFunction()+++++++++++");
-        callFitnessFunction();
+        callFitnessFunction(mainSchedule);
 
        // ShowSchedules();
 
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
-
-
-
-
         do {
-            ArrayList<Schedule> allSchedules = Selection(mainPopulation.get(generationNum));
+            ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
+            allSchedules = Selection(mainPopulation.get(generationNum));
             System.out.println("selection Size : "+allSchedules.size());
 
             for (int i = 0; i < 50; i++) {
@@ -75,6 +72,7 @@ public class AIProject {
 
         }while( Loop(mainPopulation.get(generationNum-1)));    //checks if we should stop looping or not
         System.out.println("Solution for this population is :"+mainPopulation.get(mainPopulation.size()-1).getBestFT()+" in generationNum : "+generationNum);
+
     }
 
     //take schedules that are returned from Crossover & Selection method and add them to new Population
@@ -114,7 +112,7 @@ public class AIProject {
     private static ArrayList<Schedule> Selection(Population currentPopulation) {
         ArrayList<Schedule> selectedSchedules = new ArrayList<>();
         int z = (currentPopulation.schedule.size() /2);
-        for(int i = 0; i < z ; i++) {           //loop as half of this population Schedule size ( generation )
+        for(int i = 0; i < 50 ; i++) {           //loop as half of this population Schedule size ( generation )
 
             int totalSum = 0;
 
@@ -372,18 +370,119 @@ public class AIProject {
         newSchedule1.processor2 = crossOverS1P2Tasks;
         newSchedule2.processor1 = crossOverS2P1Tasks;
         newSchedule2.processor2 = crossOverS2P2Tasks;
+        int maxHieght = AIProject.ts.get(AIProject.ts.size()-1).getHight();
+
+        for(int i=1; i<=maxHieght; i++){    //starting from hieght 1
+            // Processor-1
+            for (int j = 0; j < newSchedule1.processor1.size(); j++) {
+                if(newSchedule1.processor1.get(j).getHight() == i){ // same high
+
+                    for(int s = 0; s < newSchedule1.processor1.get(j).getPredecessor().size(); s++) {
+                        for(int k = 0; k < newSchedule1.processor2.size(); k++){// loop as number of predecessores of the Task to check them one by one
+                            if(newSchedule1.processor2.get(k).getId() == newSchedule1.processor1.get(j).getPredecessor().get(s)){//check if predecessore number "s" is equal to the task in the second processor
+                                if(newSchedule1.processor1.get(j).getStartTime() < newSchedule1.processor2.get(k).getFinshTime() && newSchedule1.processor1.get(j).getHight() != 0){//update if start time is less than next task finish time
+
+                                    newSchedule1.processor1.get(j).setStartTime(newSchedule1.processor2.get(k).getFinshTime());
+                                    newSchedule1.processor1.get(j).setFinshTime(newSchedule1.processor1.get(j).getStartTime() + newSchedule1.processor1.get(j).getDuration());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            // Processor-2
+            for (int j = 0; j < newSchedule1.processor2.size(); j++) {
+                if(newSchedule1.processor2.get(j).getHight() == i){ // match
+                    // int lastDep = newSchedule1.processor2.get(j).getPredecessor().get(newSchedule1.processor2.get(j).getPredecessor().size()-1);
+
+                    for(int s = 0; s < newSchedule1.processor2.get(j).getPredecessor().size(); s++) {
+                        for(int k = 0; k < newSchedule1.processor1.size(); k++){
+                            if(newSchedule1.processor1.get(k).getId() == newSchedule1.processor2.get(j).getPredecessor().get(s)){
+                                if(newSchedule1.processor2.get(j).getStartTime() < newSchedule1.processor1.get(k).getFinshTime() && newSchedule1.processor2.get(j).getHight() != 0){//update
+
+                                    newSchedule1.processor2.get(j).setStartTime(newSchedule1.processor1.get(k).getFinshTime());
+                                    newSchedule1.processor2.get(j).setFinshTime(newSchedule1.processor2.get(j).getStartTime() + newSchedule1.processor2.get(j).getDuration());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Processor-1
+        for (int j = 0; j < newSchedule2.processor1.size(); j++) {
+            if(newSchedule2.processor1.get(j).getHight() == i){ // same high
+
+                for(int s = 0; s < newSchedule2.processor1.get(j).getPredecessor().size(); s++) {
+                    for(int k = 0; k < newSchedule2.processor2.size(); k++){// loop as number of predecessores of the Task to check them one by one
+                        if(newSchedule2.processor2.get(k).getId() == newSchedule2.processor1.get(j).getPredecessor().get(s)){//check if predecessore number "s" is equal to the task in the second processor
+                            if(newSchedule2.processor1.get(j).getStartTime() < newSchedule2.processor2.get(k).getFinshTime() && newSchedule2.processor1.get(j).getHight() != 0){//update if start time is less than next task finish time
+
+                                newSchedule2.processor1.get(j).setStartTime(newSchedule2.processor2.get(k).getFinshTime());
+                                newSchedule2.processor1.get(j).setFinshTime(newSchedule2.processor1.get(j).getStartTime() + newSchedule2.processor1.get(j).getDuration());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Processor-2
+        for (int j = 0; j < newSchedule2.processor2.size(); j++) {
+            if(newSchedule2.processor2.get(j).getHight() == i){ // match
+                // int lastDep = newSchedule2.processor2.get(j).getPredecessor().get(newSchedule2.processor2.get(j).getPredecessor().size()-1);
+
+                for(int s = 0; s < newSchedule2.processor2.get(j).getPredecessor().size(); s++) {
+                    for(int k = 0; k < newSchedule2.processor1.size(); k++){
+                        if(newSchedule2.processor1.get(k).getId() == newSchedule2.processor2.get(j).getPredecessor().get(s)){
+                            if(newSchedule2.processor2.get(j).getStartTime() < newSchedule2.processor1.get(k).getFinshTime() && newSchedule2.processor2.get(j).getHight() != 0){//update
+
+                                newSchedule2.processor2.get(j).setStartTime(newSchedule2.processor1.get(k).getFinshTime());
+                                newSchedule2.processor2.get(j).setFinshTime(newSchedule2.processor2.get(j).getStartTime() + newSchedule2.processor2.get(j).getDuration());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        int getSchedFTS1 = 0;
+        if(newSchedule1.processor1.get(newSchedule1.processor1.size()-1).getFinshTime()>newSchedule1.processor2.get(newSchedule1.processor2.size()-1).getFinshTime()) {
+            getSchedFTS1 = newSchedule1.processor1.get(newSchedule1.processor1.size() - 1).getFinshTime();
+//        System.out.println("Sched FT :" + getSchedFT);
+        } else {
+            getSchedFTS1 = newSchedule1.processor2.get(newSchedule1.processor2.size() - 1).getFinshTime();
+//        System.out.println("Sched FT :" + getSchedFT);
+        }
+        int getSchedFTS2 = 0;
+        if(newSchedule2.processor1.get(newSchedule2.processor1.size()-1).getFinshTime()>newSchedule2.processor2.get(newSchedule2.processor2.size()-1).getFinshTime()) {
+            getSchedFTS2 = newSchedule2.processor1.get(newSchedule2.processor1.size() - 1).getFinshTime();
+//        System.out.println("Sched FT :" + getSchedFT);
+        } else {
+            getSchedFTS2 = newSchedule2.processor2.get(newSchedule2.processor2.size() - 1).getFinshTime();
+//        System.out.println("Sched FT :" + getSchedFT);
+        }
+        newSchedule1.setSchedFinishTime(getSchedFTS1);
+        newSchedule2.setSchedFinishTime(getSchedFTS2);
+
         CrossOvedSchedules.add(newSchedule1);
         CrossOvedSchedules.add(newSchedule2);
 
         return CrossOvedSchedules;
     }
 
-    private static void callFitnessFunction() {
-        for (int i = 0; i < mainSchedule.size(); i++) {
+    private static void callFitnessFunction(ArrayList<Schedule> currentSchedule) {
+        for (int i = 0; i < currentSchedule.size(); i++) {
 //            System.out.println("******************\nSchedule " + (i + 1));
-            mainSchedule.get(i).initialTime();
+            currentSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
-            mainSchedule.get(i).setSchedFinishTime(mainSchedule.get(i).FitnessFunction());
+            mainSchedule.get(i).setSchedFinishTime(currentSchedule.get(i).FitnessFunction());
 //            mainSchedule.get(i).print();
         }
     }

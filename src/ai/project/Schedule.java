@@ -120,7 +120,7 @@ public int FitnessFunction(){
 
 //print all Tasks    
     public void print() {
-        System.out.println("Schedule Finish Time = "+sFT);
+        System.out.println("Schedule Finish Time = "+getsFT());
         System.out.println("Processor #1");
         for (int i = 0; i < processor1.size(); i++) {
             System.out.println("Task #["+processor1.get(i).getId()+"] Duration ["+processor1.get(i).getDuration()+
