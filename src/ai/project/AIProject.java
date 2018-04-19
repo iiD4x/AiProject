@@ -30,6 +30,7 @@ public class AIProject {
     public static Population tempPopulation;
     public static ArrayList<Population> mainPopulation = new ArrayList<>();
     private static double randomNumDouble;
+    private static int bestGeneration=0;
 
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -83,7 +84,7 @@ public class AIProject {
             generateNewPopulation(allSchedules);
             generationNum++;
         } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
-        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + generationNum);
+        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + bestGeneration);
 
     }
 
@@ -100,6 +101,7 @@ public class AIProject {
 //        stop after 1000 iteration and there is no improvements in the finish time
         if (population.getBestFT() < check) {
             check = population.getBestFT(); //if there is a better solution than the current solution
+            bestGeneration = generationNum;
             i = 0;
         } else {
             i++;

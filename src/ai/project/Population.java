@@ -8,7 +8,7 @@ import static java.lang.Integer.MAX_VALUE;
 public class Population {
     ArrayList<Schedule> schedule = new ArrayList<>();
     private int BestFT = MAX_VALUE ;     //best finish time in this population
-    int numberOfGeneration = AIProject.bestGeneration++;
+
     //calculate best finish time of the population
     public int getBestFT() {
 
