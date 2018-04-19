@@ -22,7 +22,8 @@ public class Population {
 
     public void print(){
         for (int i = 0; i < schedule.size(); i++) {
-            System.out.println(i+"  FT : "+schedule.get(i).getsFT());
+            System.out.println("SchedNum "+(i+1));
+            schedule.get(i).print();
         }
     }
 

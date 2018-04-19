@@ -2,6 +2,7 @@ package ai.project;
 
 import java.util.ArrayList;
 import static ai.project.AIProject.number_of_tasks;
+import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.max;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -59,19 +60,19 @@ public void updateTime(){
 }
 
 //FitnessFunction
-public int FitnessFunction(){
+public int FitnessFunction(Schedule nSched){
     int maxHieght = AIProject.ts.get(AIProject.ts.size()-1).getHight();
     
     for(int i=1; i<=maxHieght; i++){    //starting from hieght 1
         // Processor-1
         for (int j = 0; j < processor1.size(); j++) {
-            if(processor1.get(j).getHight() == i && processor1.get(j).getHight() != 0){ // same high
+            if(processor1.get(j).getHight() == i){ // same high
                 
                 for(int s = 0; s < processor1.get(j).getPredecessor().size(); s++) {
                     for(int k = 0; k < processor2.size(); k++){// loop as number of predecessores of the Task to check them one by one
                     if(processor2.get(k).getId() == processor1.get(j).getPredecessor().get(s)){//check if predecessore number "s" is equal to the task in the second processor
-                        if(processor1.get(j).getStartTime() < processor2.get(k).getFinshTime() && processor1.get(j).getHight() != 0){//update if start time is less than next task finish time
-                            
+                        if(processor1.get(j).getStartTime() < processor2.get(k).getFinshTime()){//update if start time is less than next task finish time
+
                             processor1.get(j).setStartTime(processor2.get(k).getFinshTime());
                             processor1.get(j).setFinshTime(processor1.get(j).getStartTime() + processor1.get(j).getDuration());
                             break;
@@ -91,8 +92,8 @@ public int FitnessFunction(){
                 for(int s = 0; s < processor2.get(j).getPredecessor().size(); s++) {
                     for(int k = 0; k < processor1.size(); k++){
                     if(processor1.get(k).getId() == processor2.get(j).getPredecessor().get(s)){
-                        if(processor2.get(j).getStartTime() < processor1.get(k).getFinshTime() && processor2.get(j).getHight() != 0){//update
-                            
+                        if(processor2.get(j).getStartTime() < processor1.get(k).getFinshTime()){//update
+
                             processor2.get(j).setStartTime(processor1.get(k).getFinshTime());
                             processor2.get(j).setFinshTime(processor2.get(j).getStartTime() + processor2.get(j).getDuration());
                             break;
@@ -106,19 +107,26 @@ public int FitnessFunction(){
     //get max finish time
     updateTime();//useless actually but its work is to fix any timing conflicts after calling fitness function
 
-    int getSchedFT = 0;
-    if(processor1.get(processor1.size()-1).getFinshTime()>processor2.get(processor2.size()-1).getFinshTime()) {
-        getSchedFT = processor1.get(processor1.size() - 1).getFinshTime();
-//        System.out.println("Sched FT :" + getSchedFT);
-        return getSchedFT;
-    } else {
-        getSchedFT = processor2.get(processor2.size() - 1).getFinshTime();
-//        System.out.println("Sched FT :" + getSchedFT);
-        return getSchedFT;
-    }
+    int getSchedFT = 15;
+    return calcSchedFT(getSchedFT,nSched);
 }
 
-//print all Tasks    
+    private int calcSchedFT(int getSchedFT, Schedule nSched) {
+    if(nSched.processor1.size() == 0){
+        getSchedFT = nSched.processor2.get(nSched.processor2.size() - 1).getFinshTime();
+    }else if(nSched.processor2.size() == 0){
+        getSchedFT = nSched.processor1.get(nSched.processor1.size() - 1).getFinshTime();
+    }else if(nSched.processor1.get(nSched.processor1.size()-1).getFinshTime()>nSched.processor2.get(nSched.processor2.size()-1).getFinshTime()) {
+            getSchedFT = nSched.processor1.get(nSched.processor1.size() - 1).getFinshTime();
+            return getSchedFT;
+        }else{
+            getSchedFT = nSched.processor2.get(nSched.processor2.size() - 1).getFinshTime();
+            return getSchedFT;
+        }
+    return  getSchedFT;
+    }
+
+    //print all Tasks
     public void print() {
         System.out.println("Schedule Finish Time = "+getsFT());
         System.out.println("Processor #1");
