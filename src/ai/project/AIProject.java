@@ -35,7 +35,7 @@ public class AIProject {
 
         ReadFromFile();
 
-        GenerateSchedules(ts);
+        GenerateSchedules();
 
 //        ShowSchedules();
 //        callInitialTime();
@@ -44,42 +44,45 @@ public class AIProject {
         System.out.println("HERE We Will Print After Generating Schedule");
         callFitnessFunction(mainSchedule);
         for (int j = 0; j <mainSchedule.size() ; j++) {
+            System.out.println("SchedNum "+(j+1));
             mainSchedule.get(j).print();
         }
 
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
         System.out.println("*******************************************************************");
-        System.out.println("HERE We Will Print After Inserting the schedule inside population and applying fittness");
-        callFitnessFunction(mainPopulation.get(0).schedule);
+//        System.out.println("HERE We Will Print After Inserting the schedule inside population and applying fittness");
+//        callFitnessFunction(mainPopulation.get(0).schedule);
         System.out.println("*******************************************************************");
         System.out.println("HERE Print the first generation using print from inside population");
         mainPopulation.get(0).print();
-//        do {
-//            ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
-//            allSchedules = Selection(mainPopulation.get(generationNum));
-//            for (int i = 0; i < 25; i++) {
-//                ArrayList<Schedule> Crossoved = new ArrayList<Schedule>();
-//                int minSched = 0, maxSched = 49;
-//                Random randomNum = new Random();
-//                int randomSched1 = minSched + randomNum.nextInt(maxSched);
-//                int randomSched2 = minSched + randomNum.nextInt(maxSched);
-//                if (randomSched1 == randomSched2) {
-//                    randomSched2 += 1;
-//                }
-//                Crossoved.addAll(callCrossOver(allSchedules.get(randomSched1), allSchedules.get(randomSched2)));
-//                allSchedules.addAll(Crossoved);
-//
-//            }
-//
-//            // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
-//            generateNewPopulation(allSchedules);
-//            generationNum++;
-////            callFitnessFunction(mainPopulation.get(generationNum).schedule);
-//            mainPopulation.get(generationNum).getBestFT();
-//
-//        } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
-////        mainPopulation.get(0).print();
-//        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + generationNum);
+        do {
+            ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
+            allSchedules = Selection(mainPopulation.get(generationNum));
+            for (int i = 0; i < 25; i++) {
+                ArrayList<Schedule> Crossoved = new ArrayList<Schedule>();
+                int minSched = 0, maxSched = 49;
+                Random randomNum = new Random();
+                int randomSched1 = minSched + randomNum.nextInt(maxSched);
+                int randomSched2 = minSched + randomNum.nextInt(maxSched);
+                if (randomSched1 == randomSched2) {
+                    randomSched2 += 1;
+                }
+                Crossoved.addAll(callCrossOver(allSchedules.get(randomSched1), allSchedules.get(randomSched2)));
+                callFitnessFunction(Crossoved);
+                allSchedules.addAll(Crossoved);
+
+            }
+
+            // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
+            generateNewPopulation(allSchedules);
+            generationNum++;
+//            callFitnessFunction(mainPopulation.get(generationNum).schedule);
+            mainPopulation.get(generationNum).getBestFT();
+//            mainPopulation.get(generationNum).print();
+
+        } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
+//        mainPopulation.get(mainPopulation.size()-1).print();
+        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + generationNum);
 
     }
 
@@ -100,7 +103,7 @@ public class AIProject {
         } else {
             i++;
         }
-        if (i == 2000) {
+        if (i == 15000) {
             return false;
         }
 
@@ -263,14 +266,20 @@ public class AIProject {
 
     private static void GenerateSchedules() {
         BubbleSort(ts);
-        for (int j = 0; j < 10; j++) {
+        Task old, temp;
+        for (int j = 0; j < 100; j++) {
             tempSchedule = new Schedule();
             for (int i = 0; i < ts.size(); i++) {
                 randomNum = ThreadLocalRandom.current().nextInt(1, 3);
+                old = ts.get(i);
+                temp = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                temp.setDone(old.getDone());
+                temp.setStartTime(old.getStartTime());
+                temp.setFinshTime(old.getFinshTime());
                 if (randomNum == 1) {
-                    tempSchedule.processor1.add(ts.get(i));
+                    tempSchedule.processor1.add(temp);
                 } else {
-                    tempSchedule.processor2.add(ts.get(i));
+                    tempSchedule.processor2.add(temp);
                 }
             }
             mainSchedule.add(tempSchedule);
@@ -436,7 +445,7 @@ public class AIProject {
 
     private static void callFitnessFunction(ArrayList<Schedule> currentSchedule) {
         for (int i = 0; i < currentSchedule.size(); i++) {
-            System.out.println("SchedNum "+(i+1));
+//            System.out.println("SchedNum "+(i+1));
             currentSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
             int schedFinTime = currentSchedule.get(i).FitnessFunction(currentSchedule.get(i));
