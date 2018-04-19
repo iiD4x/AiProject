@@ -13,8 +13,8 @@ public class Population {
     public int getBestFT() {
 
         for (int i = 0; i < schedule.size(); i++) {
-            if(schedule.get(i).getsFT() < BestFT){
-                this.BestFT = schedule.get(i).getsFT();
+            if(schedule.get(i).sFT < BestFT){
+                this.BestFT = schedule.get(i).sFT;
             }
         }
         return BestFT ;

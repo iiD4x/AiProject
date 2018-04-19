@@ -1,26 +1,20 @@
 package ai.project;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
 
 public class AIProject {
 
     public static int number_of_tasks;
     public static int generationNum = 0;//generation number
-    public static int check = MAX_VALUE ,i=0 ;
+    public static int check = MAX_VALUE, i = 0;
     public static Task T;
     public static ArrayList<Task> ts = new ArrayList<>();
 
@@ -43,48 +37,49 @@ public class AIProject {
         GenerateSchedules();
 
 //        ShowSchedules();
+//        callInitialTime();
 
-        callInitialTime();
-
-        System.out.println("\n+++++++++FitnessFunction()+++++++++++");
+        System.out.println("*******************************************************************");
+        System.out.println("HERE We Will Print After Generating Schedule");
         callFitnessFunction(mainSchedule);
-
-       // ShowSchedules();
-
         InitialPopulation(mainSchedule);//!@#$%^& need to double check
-        do {
-            ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
-            allSchedules = Selection(mainPopulation.get(generationNum));
-            for (int i = 0; i < 25; i++) {
-                ArrayList<Schedule> Crossoved = new ArrayList<Schedule>();
-                int minSched=0,maxSched=49;
-                Random randomNum = new Random();
-                int randomSched1 = minSched + randomNum.nextInt(maxSched);
-                int randomSched2 = minSched + randomNum.nextInt(maxSched);
-                if(randomSched1 == randomSched2){
-                    randomSched2 += 1;
-                }
-                Crossoved.addAll(callCrossOver(allSchedules.get(randomSched1),allSchedules.get(randomSched2)));
-                callFitnessFunction(Crossoved);
-                allSchedules.addAll(Crossoved);
-
-            }
-
-            // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
-            generateNewPopulation(allSchedules);
-            generationNum++;
-            callFitnessFunction(mainPopulation.get(generationNum).schedule);
-            mainPopulation.get(generationNum).getBestFT();
-
-
-        }while( Loop(mainPopulation.get(generationNum-1)));    //checks if we should stop looping or not
-        mainPopulation.get(mainPopulation.size()-1).print();
-        System.out.println("Solution for this population is :"+mainPopulation.get(mainPopulation.size()-1).getBestFT()+" in generationNum : "+generationNum);
+        System.out.println("*******************************************************************");
+        System.out.println("HERE We Will Print After Inserting the schedule inside population and applying fittness");
+        callFitnessFunction(mainPopulation.get(0).schedule);
+        System.out.println("*******************************************************************");
+        System.out.println("HERE Print the first generation using print from inside population");
+        mainPopulation.get(0).print();
+//        do {
+//            ArrayList<Schedule> allSchedules = new ArrayList<Schedule>();
+//            allSchedules = Selection(mainPopulation.get(generationNum));
+//            for (int i = 0; i < 25; i++) {
+//                ArrayList<Schedule> Crossoved = new ArrayList<Schedule>();
+//                int minSched = 0, maxSched = 49;
+//                Random randomNum = new Random();
+//                int randomSched1 = minSched + randomNum.nextInt(maxSched);
+//                int randomSched2 = minSched + randomNum.nextInt(maxSched);
+//                if (randomSched1 == randomSched2) {
+//                    randomSched2 += 1;
+//                }
+//                Crossoved.addAll(callCrossOver(allSchedules.get(randomSched1), allSchedules.get(randomSched2)));
+//                allSchedules.addAll(Crossoved);
+//
+//            }
+//
+//            // now allSchedules have all the ( crossedOver & selected ) schedules so we can generate a new population of it
+//            generateNewPopulation(allSchedules);
+//            generationNum++;
+////            callFitnessFunction(mainPopulation.get(generationNum).schedule);
+//            mainPopulation.get(generationNum).getBestFT();
+//
+//        } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
+////        mainPopulation.get(0).print();
+//        System.out.println("Solution for this population is :" + mainPopulation.get(mainPopulation.size() - 1).getBestFT() + " in generationNum : " + generationNum);
 
     }
 
     //take schedules that are returned from Crossover & Selection method and add them to new Population
-    private static void generateNewPopulation(ArrayList<Schedule> wholeSchedules ) {
+    private static void generateNewPopulation(ArrayList<Schedule> wholeSchedules) {
         tempPopulation = new Population();
         tempPopulation.schedule.addAll(wholeSchedules);
         mainPopulation.add(tempPopulation);
@@ -94,13 +89,13 @@ public class AIProject {
     for the next 100 generations*/
     private static boolean Loop(Population population) {
 //        stop after 1000 iteration and there is no improvements in the finish time
-        if (population.getBestFT() < check){
+        if (population.getBestFT() < check) {
             check = population.getBestFT(); //if there is a better solution than the current solution
-            i=0;
-        }else {
+            i = 0;
+        } else {
             i++;
         }
-        if(i == 2000){
+        if (i == 2000) {
             return false;
         }
 
@@ -109,33 +104,29 @@ public class AIProject {
 
     private static void InitialPopulation(ArrayList<Schedule> mainSchedule) {
         tempPopulation = new Population();
-//        for (int i = 0; i < mainSchedule.size(); i++) { //to add all schedules of this generation to the population
-//            tempPopulation.schedule.add(mainSchedule.get(i));   //fill the schedule inside the temporary population
-//        }
         tempPopulation.schedule = mainSchedule;
         mainPopulation.add(tempPopulation);     //add the whole temporary population now
-//        generationNum++;
         System.out.println();
     }
 
     private static ArrayList<Schedule> Selection(Population currentPopulation) {
         ArrayList<Schedule> selectedSchedules = new ArrayList<>();
-        int z = (currentPopulation.schedule.size() /2);
-        for(int i = 0; i < 50 ; i++) {           //loop as half of this population Schedule size ( generation )
+        int z = (currentPopulation.schedule.size() / 2);
+        for (int i = 0; i < 50; i++) {           //loop as half of this population Schedule size ( generation )
 
             int totalSum = 0;
 
-            for (int j = currentPopulation.schedule.size()-1; j >= 0 ; j--) {
+            for (int j = currentPopulation.schedule.size() - 1; j >= 0; j--) {
                 totalSum += currentPopulation.schedule.get(j).getsFT();
             }
 
             int rand = ThreadLocalRandom.current().nextInt(0, totalSum + 1);
             int partialSum = 0;
 
-            for (int k = currentPopulation.schedule.size()-1; k >= 0 ; k--) {
+            for (int k = currentPopulation.schedule.size() - 1; k >= 0; k--) {
                 partialSum += currentPopulation.schedule.get(k).getsFT();
                 if (partialSum >= rand) {       //!@#$%
-                    selectedSchedules.add( currentPopulation.schedule.get(i));
+                    selectedSchedules.add(currentPopulation.schedule.get(i));
                     break;      //finish this iteration and add this schedule then select another one again
                 }
             }
@@ -145,15 +136,19 @@ public class AIProject {
     }
 
     public static void ReadFromFile() throws FileNotFoundException {
-        String InstanceToRead="";
+        String InstanceToRead = "";
         System.out.println("Choose Instance file [1 for instance1 ,2 for instance2,3 for instance3,4 for TestSample]");
         Scanner readfiles = new Scanner(System.in);
         int ChoosedFile = readfiles.nextInt();
-        if (ChoosedFile == 1) InstanceToRead = "Instance1.txt";
-        else if (ChoosedFile==2) InstanceToRead = "Instance2.txt";
-        else if (ChoosedFile==3) InstanceToRead = "Instance3.txt";
-        else if (ChoosedFile==4) InstanceToRead = "sample.txt";
-        else{
+        if (ChoosedFile == 1) {
+            InstanceToRead = "Instance1.txt";
+        } else if (ChoosedFile == 2) {
+            InstanceToRead = "Instance2.txt";
+        } else if (ChoosedFile == 3) {
+            InstanceToRead = "Instance3.txt";
+        } else if (ChoosedFile == 4) {
+            InstanceToRead = "sample.txt";
+        } else {
             System.out.println("Wrong input");
         }
 
@@ -233,19 +228,19 @@ public class AIProject {
     }
 
     private static void Mutation(Schedule S1) {
-        Task mutationTaskP1 = new Task(),mutationTaskP2 = new Task();
-        int tempInx1 = 0,tempInx2 = 0;
+        Task mutationTaskP1 = new Task(), mutationTaskP2 = new Task();
+        int tempInx1 = 0, tempInx2 = 0;
 
-        int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
+        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHight();
         Random randomNum = new Random();
         int mutationHeight = 0;
         boolean foundP1P2 = false;
         for (int k = 0; k < number_of_tasks && !foundP1P2; k++) {
             mutationHeight = minHT + randomNum.nextInt(maxHT);
             for (int i = 0; i < S1.processor1.size(); i++) {
-                if(S1.processor1.get(i).getHight()== mutationHeight && !foundP1P2){
+                if (S1.processor1.get(i).getHight() == mutationHeight && !foundP1P2) {
                     for (int j = 0; j < S1.processor2.size(); j++) {
-                        if(S1.processor2.get(j).getHight()== mutationHeight) {
+                        if (S1.processor2.get(j).getHight() == mutationHeight) {
                             mutationTaskP1 = S1.processor1.remove(i);
                             tempInx1 = i;
                             mutationTaskP2 = S1.processor2.remove(j);
@@ -257,13 +252,13 @@ public class AIProject {
                 }
             }
         }
-        S1.processor1.add(tempInx1,mutationTaskP2);
-        S1.processor2.add(tempInx2,mutationTaskP1);
+        S1.processor1.add(tempInx1, mutationTaskP2);
+        S1.processor2.add(tempInx2, mutationTaskP1);
     }
 
     private static void GenerateSchedules() {
         BubbleSort(ts);
-        for (int j = 0; j < 100; j++) {
+        for (int j = 0; j < 10; j++) {
             tempSchedule = new Schedule();
             for (int i = 0; i < ts.size(); i++) {
                 randomNum = ThreadLocalRandom.current().nextInt(1, 3);
@@ -291,16 +286,16 @@ public class AIProject {
 
         for (int j = 0; j < mainSchedule.size(); j++) {
             System.out.println("******************\nSchedule " + (j + 1) + " : ");
-            System.out.println("Schedule Finish Time = "+mainSchedule.get(j).sFT);
+            System.out.println("Schedule Finish Time = " + mainSchedule.get(j).sFT);
             System.out.print("P1 : ");
             for (int i = 0; i < mainSchedule.get(j).processor1.size(); i++) {
-                System.out.print("["+mainSchedule.get(j).processor1.get(i).getId()+"]");
+                System.out.print("[" + mainSchedule.get(j).processor1.get(i).getId() + "]");
 
             }
             System.out.println("");
             System.out.print("P2 : ");
             for (int i = 0; i < mainSchedule.get(j).processor2.size(); i++) {
-                System.out.print("["+mainSchedule.get(j).processor2.get(i).getId()+"]");
+                System.out.print("[" + mainSchedule.get(j).processor2.get(i).getId() + "]");
             }
             System.out.println("");
         }
@@ -314,8 +309,8 @@ public class AIProject {
         }
     }
 
-    private static ArrayList<Schedule> callCrossOver(Schedule S1,Schedule S2) {
-        int minHT=0,maxHT=AIProject.ts.get(AIProject.ts.size()-1).getHight();
+    private static ArrayList<Schedule> callCrossOver(Schedule S1, Schedule S2) {
+        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHight();
         Random randomNum = new Random();
         int crossoverSite = minHT + randomNum.nextInt(maxHT);
         //System.out.println("The CrossOver Site : "+crossoverSite);
@@ -328,51 +323,100 @@ public class AIProject {
         ArrayList<Task> crossOverS2P1Tasks = new ArrayList<Task>();
         ArrayList<Task> crossOverS2P2Tasks = new ArrayList<Task>();
 
-            //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
-            for (int j = 0; j < S1.processor1.size(); j++){
-                if (S1.processor1.get(j).getHight() <= crossoverSite) {
-                    crossOverS1P1Tasks.add(S1.processor1.get(j));
-                }
+        Task old, new1;
+        //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
+        for (int j = 0; j < S1.processor1.size(); j++) {
+            old = S1.processor1.get(j);
+            if (old.getHight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS1P1Tasks.add(new1);
+//                crossOverS1P1Tasks.add(S1.processor1.get(j));
             }
-            for (int j = 0; j < S2.processor1.size(); j++){
-                if (S2.processor1.get(j).getHight() > crossoverSite) {
-                    crossOverS1P1Tasks.add(S2.processor1.get(j));
-                }
+        }
+        for (int j = 0; j < S2.processor1.size(); j++) {
+            old = S2.processor1.get(j);
+            if (old.getHight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS1P1Tasks.add(new1);
+//                crossOverS1P1Tasks.add(S2.processor1.get(j));
             }
-            //The New Schedule 1 Processor 2 (Lower from S1 High from S2)
-            for (int j = 0; j < S1.processor2.size(); j++){
-                if (S1.processor2.get(j).getHight() <= crossoverSite) {
-                    crossOverS1P2Tasks.add(S1.processor2.get(j));
-                }
+        }
+        //The New Schedule 1 Processor 2 (Lower from S1 High from S2)
+        for (int j = 0; j < S1.processor2.size(); j++) {
+            old = S1.processor2.get(j);
+            if (old.getHight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS1P2Tasks.add(new1);
+//                crossOverS1P2Tasks.add(S1.processor2.get(j));
             }
-            for (int j = 0; j < S2.processor2.size(); j++){
-                if (S2.processor2.get(j).getHight() > crossoverSite) {
-                    crossOverS1P2Tasks.add(S2.processor2.get(j));
-                }
+        }
+        for (int j = 0; j < S2.processor2.size(); j++) {
+            old = S2.processor2.get(j);
+            if (old.getHight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS1P2Tasks.add(new1);
+//                crossOverS1P2Tasks.add(S2.processor2.get(j));
             }
+        }
 
-            //The New Schedule 2 Processor 1 (Lower from S2 High from S1)
-            for (int j = 0; j < S2.processor1.size(); j++){
-                if (S2.processor1.get(j).getHight() <= crossoverSite) {
-                    crossOverS2P1Tasks.add(S2.processor1.get(j));
-                }
+        //The New Schedule 2 Processor 1 (Lower from S2 High from S1)
+        for (int j = 0; j < S2.processor1.size(); j++) {
+            old = S2.processor1.get(j);
+            if (old.getHight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS2P1Tasks.add(new1);
+//                crossOverS2P1Tasks.add(S2.processor1.get(j));
             }
-            for (int j = 0; j < S1.processor1.size(); j++){
-                if (S1.processor1.get(j).getHight() > crossoverSite) {
-                    crossOverS2P1Tasks.add(S1.processor1.get(j));
-                }
+        }
+        for (int j = 0; j < S1.processor1.size(); j++) {
+            old = S1.processor1.get(j);
+            if (old.getHight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS2P1Tasks.add(new1);
+//                crossOverS2P1Tasks.add(S1.processor1.get(j));
             }
-            //The New Schedule 2 Processor 2 (Lower from S2 High from S1)
-            for (int j = 0; j < S2.processor2.size(); j++){
-                if (S2.processor2.get(j).getHight() <= crossoverSite) {
-                    crossOverS2P2Tasks.add(S2.processor2.get(j));
-                }
+        }
+        //The New Schedule 2 Processor 2 (Lower from S2 High from S1)
+        for (int j = 0; j < S2.processor2.size(); j++) {
+            old = S2.processor2.get(j);
+            if (old.getHight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS2P2Tasks.add(new1);
+//                crossOverS2P2Tasks.add(S2.processor2.get(j));
             }
-            for (int j = 0; j < S1.processor2.size(); j++){
-                if (S1.processor2.get(j).getHight() > crossoverSite) {
-                    crossOverS2P2Tasks.add(S1.processor2.get(j));
-                }
+        }
+        for (int j = 0; j < S1.processor2.size(); j++) {
+            old = S1.processor2.get(j);
+            if (old.getHight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                new1.setStartTime(old.getStartTime());
+                new1.setFinshTime(old.getFinshTime());
+                new1.setDone(old.getDone());
+                crossOverS2P2Tasks.add(new1);
+//                crossOverS2P2Tasks.add(S1.processor2.get(j));
             }
+        }
 
         //Adding processes into new schedules
         newSchedule1.processor1 = crossOverS1P1Tasks;
@@ -381,17 +425,18 @@ public class AIProject {
         newSchedule2.processor2 = crossOverS2P2Tasks;
         CrossOvedSchedules.add(newSchedule1);
         CrossOvedSchedules.add(newSchedule2);
-
+        callFitnessFunction(CrossOvedSchedules);
         return CrossOvedSchedules;
     }
 
     private static void callFitnessFunction(ArrayList<Schedule> currentSchedule) {
         for (int i = 0; i < currentSchedule.size(); i++) {
-//            System.out.println("******************\nSchedule " + (i + 1));
+            System.out.println("SchedNum "+(i+1));
             currentSchedule.get(i).initialTime();
 //            mainSchedule.get(i).FitnessFunction();
-            currentSchedule.get(i).setSchedFinishTime(currentSchedule.get(i).FitnessFunction(currentSchedule.get(i)));
-//            currentSchedule.get(i).print();
+            int schedFinTime = currentSchedule.get(i).FitnessFunction(currentSchedule.get(i));
+            currentSchedule.get(i).setSchedFinishTime(schedFinTime);
+            currentSchedule.get(i).print();
         }
     }
 }
