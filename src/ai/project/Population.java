@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import static java.lang.Integer.MAX_VALUE;
 
 public class Population {
-    ArrayList<Schedule> schedule = new ArrayList<>();
+    public ArrayList<Schedule> schedule = new ArrayList<>();
     private int BestFT = MAX_VALUE ;     //best finish time in this population
 
     //calculate best finish time of the population

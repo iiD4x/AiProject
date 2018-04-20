@@ -1,11 +1,6 @@
 package ai.project;
 
 import java.util.ArrayList;
-import static ai.project.AIProject.number_of_tasks;
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.max;
-import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Schedule {
 public ArrayList<Task> processor1 = new ArrayList<>();
@@ -61,17 +56,17 @@ public void updateTime(){
 
 //FitnessFunction
 public int FitnessFunction(Schedule currentSchedule){
-    int maxHieght = AIProject.ts.get(AIProject.ts.size()-1).getHight();
+    int maxHieght = AIProject.ts.get(AIProject.ts.size()-1).getHeight();
     
     for(int i=1; i<=maxHieght; i++){    //starting from hieght 1
         // Processor-1
         for (int j = 0; j < currentSchedule.processor1.size(); j++) {
-            if(currentSchedule.processor1.get(j).getHight() == i){ // same high
+            if(currentSchedule.processor1.get(j).getHeight() == i){ // same high
                 
                 for(int s = 0; s < currentSchedule.processor1.get(j).getPredecessor().size(); s++) {
                     for(int k = 0; k < currentSchedule.processor2.size(); k++){// loop as number of predecessores of the Task to check them one by one
                     if(currentSchedule.processor2.get(k).getId() == currentSchedule.processor1.get(j).getPredecessor().get(s)){//check if predecessore number "s" is equal to the task in the second processor
-                        if(currentSchedule.processor1.get(j).getStartTime() < currentSchedule.processor2.get(k).getFinshTime() && currentSchedule.processor1.get(j).getHight() != 0){//update if start time is less than next task finish time
+                        if(currentSchedule.processor1.get(j).getStartTime() < currentSchedule.processor2.get(k).getFinshTime() && currentSchedule.processor1.get(j).getHeight() != 0){//update if start time is less than next task finish time
 
                             currentSchedule.processor1.get(j).setStartTime(currentSchedule.processor2.get(k).getFinshTime());
                             currentSchedule.processor1.get(j).setFinshTime(currentSchedule.processor1.get(j).getStartTime() + currentSchedule.processor1.get(j).getDuration());
@@ -86,13 +81,13 @@ public int FitnessFunction(Schedule currentSchedule){
 
         // Processor-2
         for (int j = 0; j < currentSchedule.processor2.size(); j++) {
-            if(currentSchedule.processor2.get(j).getHight() == i){ // match
+            if(currentSchedule.processor2.get(j).getHeight() == i){ // match
                // int lastDep = currentSchedule.processor2.get(j).getPredecessor().get(currentSchedule.processor2.get(j).getPredecessor().size()-1);
                 
                 for(int s = 0; s < currentSchedule.processor2.get(j).getPredecessor().size(); s++) {
                     for(int k = 0; k < currentSchedule.processor1.size(); k++){
                     if(currentSchedule.processor1.get(k).getId() == currentSchedule.processor2.get(j).getPredecessor().get(s)){
-                        if(currentSchedule.processor2.get(j).getStartTime() < currentSchedule.processor1.get(k).getFinshTime() && currentSchedule.processor2.get(j).getHight() != 0){//update
+                        if(currentSchedule.processor2.get(j).getStartTime() < currentSchedule.processor1.get(k).getFinshTime() && currentSchedule.processor2.get(j).getHeight() != 0){//update
 
                             currentSchedule.processor2.get(j).setStartTime(currentSchedule.processor1.get(k).getFinshTime());
                             currentSchedule.processor2.get(j).setFinshTime(currentSchedule.processor2.get(j).getStartTime() + currentSchedule.processor2.get(j).getDuration());
@@ -128,13 +123,13 @@ public int FitnessFunction(Schedule currentSchedule){
         System.out.println("Processor #1");
         for (int i = 0; i < processor1.size(); i++) {
             System.out.println("Task #["+processor1.get(i).getId()+"] Duration ["+processor1.get(i).getDuration()+
-                    "] Height ["+processor1.get(i).getHight()+"] Start Time ["+ processor1.get(i).getStartTime()
+                    "] Height ["+processor1.get(i).getHeight()+"] Start Time ["+ processor1.get(i).getStartTime()
                     +"] Finish Time ["+processor1.get(i).getFinshTime()+"]\n" );
         }
             System.out.println("Processor #2 :\n");
         for (int j = 0; j < processor2.size(); j++) {
             System.out.println("Task #["+processor2.get(j).getId()+"] Duration ["+processor2.get(j).getDuration()+
-                    "] Height ["+processor2.get(j).getHight()+"] Start Time ["+ processor2.get(j).getStartTime()
+                    "] Height ["+processor2.get(j).getHeight()+"] Start Time ["+ processor2.get(j).getStartTime()
                     +"] Finish Time ["+processor2.get(j).getFinshTime()+"]\n" );
         } 
     }

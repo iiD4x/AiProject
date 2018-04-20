@@ -215,7 +215,7 @@ public class AIProject {
             //System.out.println("loop 1");
             for (int j = array.size() - 1; j > i; j--) {
                 //  System.out.println("loop 2");
-                if (array.get(j).getHight() < array.get(j - 1).getHight()) {
+                if (array.get(j).getHeight() < array.get(j - 1).getHeight()) {
 
                     temp = array.get(j - 1);
                     array.set(j - 1, array.get(j));
@@ -232,7 +232,7 @@ public class AIProject {
         }
 
 //           for(int k=0; k<array.size(); k++){
-//            System.out.println("\nTask Num #"+(k+1)+" : "+array.get(k).getName()+" , Height Of "+array.get(k).getHight());
+//            System.out.println("\nTask Num #"+(k+1)+" : "+array.get(k).getName()+" , Height Of "+array.get(k).getHeight());
 //        }
     }
 
@@ -240,16 +240,16 @@ public class AIProject {
         Task mutationTaskP1 = new Task(), mutationTaskP2 = new Task();
         int tempInx1 = 0, tempInx2 = 0;
 
-        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHight();
+        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHeight();
         Random randomNum = new Random();
         int mutationHeight = 0;
         boolean foundP1P2 = false;
         for (int k = 0; k < number_of_tasks && !foundP1P2; k++) {
             mutationHeight = minHT + randomNum.nextInt(maxHT);
             for (int i = 0; i < S1.processor1.size(); i++) {
-                if (S1.processor1.get(i).getHight() == mutationHeight && !foundP1P2) {
+                if (S1.processor1.get(i).getHeight() == mutationHeight && !foundP1P2) {
                     for (int j = 0; j < S1.processor2.size(); j++) {
-                        if (S1.processor2.get(j).getHight() == mutationHeight) {
+                        if (S1.processor2.get(j).getHeight() == mutationHeight) {
                             mutationTaskP1 = S1.processor1.remove(i);
                             tempInx1 = i;
                             mutationTaskP2 = S1.processor2.remove(j);
@@ -274,7 +274,7 @@ public class AIProject {
             for (int i = 0; i < ts.size(); i++) {
                 randomNum = ThreadLocalRandom.current().nextInt(1, 3);
                 old = ts.get(i);
-                temp = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+                temp = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 temp.setDone(old.getDone());
                 temp.setStartTime(old.getStartTime());
                 temp.setFinshTime(old.getFinshTime());
@@ -318,7 +318,7 @@ public class AIProject {
     }
 
     private static ArrayList<Schedule> callCrossOver(Schedule S1, Schedule S2) {
-        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHight();
+        int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHeight();
         Random randomNum = new Random();
         int crossoverSite = minHT + randomNum.nextInt(maxHT);
         //System.out.println("The CrossOver Site : "+crossoverSite);
@@ -335,8 +335,8 @@ public class AIProject {
         //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
         for (int j = 0; j < S1.processor1.size(); j++) {
             old = S1.processor1.get(j);
-            if (old.getHight() <= crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -346,8 +346,8 @@ public class AIProject {
         }
         for (int j = 0; j < S2.processor1.size(); j++) {
             old = S2.processor1.get(j);
-            if (old.getHight() > crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -358,8 +358,8 @@ public class AIProject {
         //The New Schedule 1 Processor 2 (Lower from S1 High from S2)
         for (int j = 0; j < S1.processor2.size(); j++) {
             old = S1.processor2.get(j);
-            if (old.getHight() <= crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -369,8 +369,8 @@ public class AIProject {
         }
         for (int j = 0; j < S2.processor2.size(); j++) {
             old = S2.processor2.get(j);
-            if (old.getHight() > crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -382,8 +382,8 @@ public class AIProject {
         //The New Schedule 2 Processor 1 (Lower from S2 High from S1)
         for (int j = 0; j < S2.processor1.size(); j++) {
             old = S2.processor1.get(j);
-            if (old.getHight() <= crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -393,8 +393,8 @@ public class AIProject {
         }
         for (int j = 0; j < S1.processor1.size(); j++) {
             old = S1.processor1.get(j);
-            if (old.getHight() > crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -405,8 +405,8 @@ public class AIProject {
         //The New Schedule 2 Processor 2 (Lower from S2 High from S1)
         for (int j = 0; j < S2.processor2.size(); j++) {
             old = S2.processor2.get(j);
-            if (old.getHight() <= crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() <= crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
@@ -416,8 +416,8 @@ public class AIProject {
         }
         for (int j = 0; j < S1.processor2.size(); j++) {
             old = S1.processor2.get(j);
-            if (old.getHight() > crossoverSite) {
-                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHight(), old.getId());
+            if (old.getHeight() > crossoverSite) {
+                new1 = new Task(old.getPredecessor(), old.getSuccessor(), old.getDuration(), old.getHeight(), old.getId());
                 new1.setStartTime(old.getStartTime());
                 new1.setFinshTime(old.getFinshTime());
                 new1.setDone(old.getDone());
