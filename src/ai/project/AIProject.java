@@ -16,7 +16,6 @@ public class AIProject {
     public static int generationNum = 0;//generation number
     public static int check = MAX_VALUE, i = 0;
     public static Task T;
-    public static ArrayList<Task> tempTask;
     public static ArrayList<Task> ts = new ArrayList<>();
 
     public static ArrayList<Integer> preds, sucs;
@@ -29,7 +28,7 @@ public class AIProject {
 
     public static Population tempPopulation;
     public static ArrayList<Population> mainPopulation = new ArrayList<>();
-    private static double randomNumDouble;
+    public static double randomNumDouble;
     private static int bestGeneration=0;
 
     @SuppressWarnings("empty-statement")
