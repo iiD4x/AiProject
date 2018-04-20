@@ -318,14 +318,6 @@ public class AIProject {
         }
     }
 
-    private static void callInitialTime() {
-        for (int i = 0; i < mainSchedule.size(); i++) {
-//            System.out.println("\tSchedule " + (i + 1));
-            mainSchedule.get(i).initialTime();
-//            mainSchedule.get(i).print();
-        }
-    }
-
     private static ArrayList<Schedule> callCrossOver(Schedule S1, Schedule S2) {
         int minHT = 0, maxHT = AIProject.ts.get(AIProject.ts.size() - 1).getHight();
         Random randomNum = new Random();
