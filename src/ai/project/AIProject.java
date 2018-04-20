@@ -82,8 +82,8 @@ public class AIProject {
             generationNum++;
         } while (Loop(mainPopulation.get(generationNum - 1)));    //checks if we should stop looping or not
 //        mainPopulation.get(bestGeneration-1).print();
-        System.out.println("Solution for this population is :" + mainPopulation.get(bestGeneration-1).getBestFT() + " in generationNum : " + bestGeneration);
-
+        System.out.println("Optimal Finish Time = " + mainPopulation.get(bestGeneration-1).getBestFT() + "\nin Generation number: " + bestGeneration);
+        ShowSchedules(mainPopulation.get(bestGeneration-1).schedule);
     }
 
     //take schedules that are returned from Crossover & Selection method and add them to new Population
@@ -298,22 +298,25 @@ public class AIProject {
 
     }
 
-    public static void ShowSchedules() {
+    public static void ShowSchedules(ArrayList<Schedule> bestScd) {
 
-        for (int j = 0; j < mainSchedule.size(); j++) {
-            System.out.println("******************\nSchedule " + (j + 1) + " : ");
-            System.out.println("Schedule Finish Time = " + mainSchedule.get(j).sFT);
-            System.out.print("P1 : ");
-            for (int i = 0; i < mainSchedule.get(j).processor1.size(); i++) {
-                System.out.print("[" + mainSchedule.get(j).processor1.get(i).getId() + "]");
+        for (int j = 0; j < bestScd.size(); j++) {
+            if(mainPopulation.get(bestGeneration-1).getBestFT()==bestScd.get(j).sFT) {
+            System.out.println("\n******************\nSchedule " + (j + 1) + " Generation number "+bestGeneration+" :");
+//                System.out.println("Schedule Finish Time = " + bestScd.get(j).sFT);
+                System.out.print("P1 : ");
+                for (int i = 0; i < bestScd.get(j).processor1.size(); i++) {
+                    System.out.print("[" + bestScd.get(j).processor1.get(i).getId() + "]");
 
+                }
+                System.out.println("");
+                System.out.print("P2 : ");
+                for (int i = 0; i < bestScd.get(j).processor2.size(); i++) {
+                    System.out.print("[" + bestScd.get(j).processor2.get(i).getId() + "]");
+                }
+                System.out.println("");
+                break;
             }
-            System.out.println("");
-            System.out.print("P2 : ");
-            for (int i = 0; i < mainSchedule.get(j).processor2.size(); i++) {
-                System.out.print("[" + mainSchedule.get(j).processor2.get(i).getId() + "]");
-            }
-            System.out.println("");
         }
     }
 
