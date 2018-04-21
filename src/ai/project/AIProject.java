@@ -358,7 +358,8 @@ public class AIProject {
         ArrayList<Task> crossOverS2P2Tasks = new ArrayList<Task>();
 
         Task old, new1;
-        //The New Schedule 1 Processor 1 (Lower from S1 High from S2)
+        //The New Schedule 1 Processor 1 (Lower from S1 High  from S2)
+
         for (int j = 0; j < S1.processor1.size(); j++) {
             old = S1.processor1.get(j);
             if (old.getHeight() <= crossoverSite) {
