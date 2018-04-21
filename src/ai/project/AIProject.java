@@ -11,7 +11,19 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Integer.MAX_VALUE;
-
+/*
+* Project Tilte : A GENETIC ALGORITHM FOR MULTIPROCESSOR SCHEDULING PROBLEM
+*
+* Authors Abdullah Alamin ( @abodamin0 )& Ahmed Maaruf ( @iiD4x )
+*
+* SUPERVISED BY : Prof. Hachemi Bennaceur
+*
+* this project is for AI ccis 330 course in IMAM University
+*
+* April 21 2018
+*
+*
+* */
 public class AIProject {
 
     public static int number_of_tasks;
@@ -148,21 +160,30 @@ public class AIProject {
 
     public static void ReadFromFile() throws FileNotFoundException {
         String InstanceToRead = "";
-        System.out.println("Choose Instance file [1 for instance1 ,2 for instance2,3 for instance3,4 for TestSample]");
+        System.out.println("Choose Instance file \n(1) for instance1" +
+                "\n(2) for instance2" +
+                "\n(3) for instance3" +
+                "\n(4) for TestSample");
         Scanner readfiles = new Scanner(System.in);
         int ChoosedFile = readfiles.nextInt();
-        if (ChoosedFile == 1) {
-            InstanceToRead = "Instance1.txt";
-        } else if (ChoosedFile == 2) {
-            InstanceToRead = "Instance2.txt";
-        } else if (ChoosedFile == 3) {
-            InstanceToRead = "Instance3.txt";
-        } else if (ChoosedFile == 4) {
-            InstanceToRead = "sample.txt";
-        } else {
-            System.out.println("Wrong input");
+        switch (ChoosedFile) {
+            case 1:
+                InstanceToRead = "Instance1.txt";
+                break;
+            case 2:
+                InstanceToRead = "Instance2.txt";
+                break;
+            case 3:
+                InstanceToRead = "Instance3.txt";
+                break;
+            case 4:
+                InstanceToRead = "sample.txt";
+                break;
+            default:
+                System.out.println("Wrong input");
+                break;
         }
-
+        System.out.println("+++++ Reading from: "+InstanceToRead+" +++++");
         File readFromFile = new File(InstanceToRead);
         Scanner readsc = new Scanner(readFromFile);
 
